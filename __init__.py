@@ -23,7 +23,7 @@
 bl_info = {
 	"name": "Paint Artist Panel",
 	"author": "CDMJ,Patrick Depoix ",
-	"version": (1, 0, 5),
+	"version": (1, 0, 6),
 	"blender": (2, 76, 0),
 	"location": "Toolbar > Misc Tab > Artist Panel",
 	"description": "Art Macros.",
@@ -43,11 +43,7 @@ Modif: 2016-02'01 Patrick optimize the code
 #--------------------------------------------------Create brush
 class MacroCreateBrush(bpy.types.Operator):
 	"""Image Brush Scene Setup Macro"""
-	 # must match a operator context, like
-	 # view3d, object or image and cannot have
-	 # more then one '.', if you need something
-	 # that is global use wm.create_brush
-	 # and uncomment from line 24-29
+	
 	bl_idname = "image.create_brush"
 	bl_label = "Setup Scene for Image Brush Maker"
 	bl_options = { 'REGISTER', 'UNDO' }
@@ -115,11 +111,7 @@ class MacroCreateBrush(bpy.types.Operator):
 #--------------------------------------------------Shaderless
 class CanvasShadeless(bpy.types.Operator):
 	"""Canvas made shadeless Macro"""
-	 # must match a operator context, like
-	 # view3d, object or image and cannot have
-	 # more then one '.', if you need something
-	 # that is global use wm.create_brush
-	 # and uncomment from line 24-29
+	 
 	bl_idname = "image.canvas_shadeless"
 	bl_label = "Canvas Shadeless"
 	bl_options = { 'REGISTER', 'UNDO' }
@@ -145,11 +137,7 @@ class CanvasShadeless(bpy.types.Operator):
 #--------------------------------------------------flip  horiz. macro
 class CanvasHoriz(bpy.types.Operator):
 	"""Canvas Flip Horizontal Macro"""
-	 # must match a operator context, like
-	 # view3d, object or image and cannot have
-	 # more then one '.', if you need something
-	 # that is global use wm.create_brush
-	 # and uncomment from line 24-29
+	
 	bl_idname = "image.canvas_horizontal"
 	bl_label = "Canvas horiz"
 	bl_options = { 'REGISTER', 'UNDO' }
@@ -178,11 +166,7 @@ class CanvasHoriz(bpy.types.Operator):
 #--------------------------------------------------flip vertical macro
 class CanvasVertical(bpy.types.Operator):
 	"""Canvas Flip Vertical Macro"""
-	 # must match a operator context, like
-	 # view3d, object or image and cannot have
-	 # more then one '.', if you need something
-	 # that is global use wm.create_brush
-	 # and uncomment from line 24-29
+	
 	bl_idname = "image.canvas_vertical"
 	bl_label = "Canvas Vertical"
 	bl_options = { 'REGISTER', 'UNDO' }
@@ -212,11 +196,7 @@ class CanvasVertical(bpy.types.Operator):
 #-------------------------------------------------ccw15
 class RotateCanvasCCW15(bpy.types.Operator):
 	"""Image Rotate CounterClockwise 15 Macro"""
-	 # must match a operator context, like
-	 # view3d, object or image and cannot have
-	 # more then one '.', if you need something
-	 # that is global use wm.create_brush
-	 # and uncomment from line 24-29
+	
 	bl_idname = "image.rotate_ccw_15"
 	bl_label = "Canvas Rotate CounterClockwise 15"
 	bl_options = { 'REGISTER', 'UNDO' }
@@ -247,11 +227,7 @@ class RotateCanvasCCW15(bpy.types.Operator):
 #-------------------------------------------------cw15
 class RotateCanvasCW15(bpy.types.Operator):
 	"""Image Rotate Clockwise 15 Macro"""
-	 # must match a operator context, like
-	 # view3d, object or image and cannot have
-	 # more then one '.', if you need something
-	 # that is global use wm.create_brush
-	 # and uncomment from line 24-29
+	 
 	bl_idname = "image.rotate_cw_15"
 	bl_label = "Canvas Rotate Clockwise 15"
 	bl_options = { 'REGISTER', 'UNDO' }
@@ -282,11 +258,7 @@ class RotateCanvasCW15(bpy.types.Operator):
 #-------------------------------------------------ccw 90
 class RotateCanvasCCW(bpy.types.Operator):
 	"""Image Rotate CounterClockwise 90 Macro"""
-	 # must match a operator context, like
-	 # view3d, object or image and cannot have
-	 # more then one '.', if you need something
-	 # that is global use wm.create_brush
-	 # and uncomment from line 24-29
+	 
 	bl_idname = "image.rotate_ccw_90"
 	bl_label = "Canvas Rotate CounterClockwise 90"
 	bl_options = { 'REGISTER', 'UNDO' }
@@ -317,11 +289,7 @@ class RotateCanvasCCW(bpy.types.Operator):
 #-------------------------------------------------cw 90
 class RotateCanvasCW(bpy.types.Operator):
 	"""Image Rotate Clockwise 90 Macro"""
-	 # must match a operator context, like
-	 # view3d, object or image and cannot have
-	 # more then one '.', if you need something
-	 # that is global use wm.create_brush
-	 # and uncomment from line 24-29
+	 
 	bl_idname = "image.rotate_cw_90"
 	bl_label = "Canvas Rotate Clockwise 90"
 	bl_options = { 'REGISTER', 'UNDO' }
@@ -371,11 +339,7 @@ class ImageReload(bpy.types.Operator):
 #-------------------------------------------------image rotation reset
 class CanvasResetrot(bpy.types.Operator):
 	"""Canvas Rotation Reset Macro"""
-	 # must match a operator context, like
-	 # view3d, object or image and cannot have
-	 # more then one '.', if you need something
-	 # that is global use wm.create_brush
-	 # and uncomment from line 24-29
+	 
 	bl_idname = "image.canvas_resetrot"
 	bl_label = "Canvas Reset Rotation"
 	bl_options = { 'REGISTER', 'UNDO' }
@@ -391,11 +355,7 @@ class CanvasResetrot(bpy.types.Operator):
 
 #-------------------------------------------------cameraview paint
 class CameraviewPaint(bpy.types.Operator):
-	 # must match a operator context, like
-	 # view3d, object or image and cannot have
-	 # more then one '.', if you need something
-	 # that is global use wm.create_brush
-	 # and uncomment from line 24-29
+	 
 	bl_idname = "image.cameraview_paint"
 	bl_label = "Cameraview Paint"
 	bl_options = { 'REGISTER', 'UNDO' }
@@ -428,7 +388,7 @@ class CameraviewPaint(bpy.types.Operator):
 		#add camera
 		bpy.ops.object.camera_add(view_align=False, \
 		enter_editmode=False, \
-		location=(0, 0, 0), \
+		location=(0, 0, 1), \
 		rotation=(0, 0, 0), \
 		layers=(True, False, False, False, False, False, False, False, \
 		False, False, False, False, False, False, False, False, False, \
@@ -446,15 +406,7 @@ class CameraviewPaint(bpy.types.Operator):
 		#ortho view on current camera
 		bpy.context.object.data.type = 'ORTHO'
 
-		#move cam up in Z by 1 unit
-		bpy.ops.transform.translate(value=(0, 0, 1), \
-		constraint_axis=(False, False, True), \
-		constraint_orientation='GLOBAL', \
-		mirror=False, \
-		proportional='DISABLED', \
-		proportional_edit_falloff='SMOOTH', \
-		proportional_size=1)
-
+		
 		#switch on composition guides for use in cameraview paint
 		bpy.context.object.data.show_guide = {'CENTER', \
 		'CENTER_DIAGONAL', 'THIRDS', 'GOLDEN', 'GOLDEN_TRIANGLE_A', \
