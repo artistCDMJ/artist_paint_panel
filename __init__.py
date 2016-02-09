@@ -22,7 +22,7 @@
 
 bl_info = {
 	"name": "Paint Artist Panel",
-	"author": "CDMJ,Patrick Depoix ",
+	"author": "CDMJ,Spirou4D ",
 	"version": (1, 0, 6),
 	"blender": (2, 76, 0),
 	"location": "Toolbar > Misc Tab > Artist Panel",
