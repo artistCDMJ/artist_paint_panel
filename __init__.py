@@ -23,7 +23,7 @@
 bl_info = {
     "name": "Paint Artist Panel",
     "author": "CDMJ,Patrick Depoix ",
-    "version": (1, 0, 5),
+    "version": (1, 0, 6),
     "blender": (2, 76, 0),
     "location": "Toolbar > Misc Tab > Artist Panel",
     "description": "Art Macros.",
