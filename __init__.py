@@ -23,7 +23,7 @@
 bl_info = {
     "name": "Paint Artist Panel",
     "author": "CDMJ,Patrick Depoix ",
-    "version": (1, 0, 6),
+    "version": (1, 0, 5),
     "blender": (2, 76, 0),
     "location": "Toolbar > Misc Tab > Artist Panel",
     "description": "Art Macros.",
@@ -524,7 +524,7 @@ class CurvePoly2d(bpy.types.Operator):
         scene = context.scene
 
         #add curve
-        bpy.ops.curve.primitive_bezier_curve_add(radius=1, view_align=False, enter_editmode=True, location=(0, 0, 0), layers=(True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False))
+        bpy.ops.curve.primitive_bezier_curve_add(radius=1, view_align=False, enter_editmode=True, layers=(True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False))
 
         
         #change to lpoly spline
