@@ -23,7 +23,7 @@
 
 bl_info = {"name": "Paint Artist Panel",
            "author": "CDMJ, Spirou4D",
-           "version": (1, 0, 6),
+           "version": (1, 0, 5),
            "blender": (2, 76, 0),
            "location": "Toolbar > Misc Tab > Artist Panel",
            "description": "Art Macros.",
@@ -220,7 +220,7 @@ class BrushMakerScene(bpy.types.Operator):
         return {'FINISHED'}
 
 
-#--------------------------------------------------Shaderless
+#--------------------------------------------------Shadeless
 class CanvasShadeless(bpy.types.Operator):
     """Canvas made shadeless Macro"""
     bl_idname = "artist_panel.canvas_shadeless"
@@ -421,18 +421,18 @@ class RotateCanvasCCW15(bpy.types.Operator):
         bpy.ops.transform.rotate(value=0.261799,
                         axis=(0, 0, 1),
                         constraint_axis=(False, False, True))
-        bpy.ops.view3d.camera_to_view_selected()
+        #bpy.ops.view3d.camera_to_view_selected()
 
-        for cam  in bpy.data.objects:
-            if cam.name == _camName:
-                cam.select = True
-                context.scene.objects.active = cam
-        context.object.data.show_guide = set()
+        #for cam  in bpy.data.objects:
+            #if cam.name == _camName:
+                #cam.select = True
+                #context.scene.objects.active = cam
+        #context.object.data.show_guide = set()
 
-        bpy.ops.object.select_all(action='DESELECT')
-        ob = bpy.data.objects[_obName]
-        ob.select = True
-        context.scene.objects.active = ob
+        #bpy.ops.object.select_all(action='DESELECT')
+        #ob = bpy.data.objects[_obName]
+        #ob.select = True
+        #context.scene.objects.active = ob
 
         #toggle texture mode / object mode
         bpy.ops.paint.texture_paint_toggle()
@@ -466,18 +466,18 @@ class RotateCanvasCW15(bpy.types.Operator):
         bpy.ops.transform.rotate(value=-0.261799,
                 axis=(0, 0, 1),
                 constraint_axis=(False, False, True))
-        bpy.ops.view3d.camera_to_view_selected()
+        #bpy.ops.view3d.camera_to_view_selected()
 
-        for cam  in bpy.data.objects:
-            if cam.name == _camName:
-                cam.select = True
-                context.scene.objects.active = cam
-        context.object.data.show_guide = set()
+        #for cam  in bpy.data.objects:
+            #if cam.name == _camName:
+                #cam.select = True
+                #context.scene.objects.active = cam
+        #03dcontext.object.data.show_guide = set()
 
-        bpy.ops.object.select_all(action='DESELECT')
-        ob = bpy.data.objects[_obName]
-        ob.select = True
-        context.scene.objects.active = ob
+        #bpy.ops.object.select_all(action='DESELECT')
+        #ob = bpy.data.objects[_obName]
+        #ob.select = True
+        #context.scene.objects.active = ob
 
         #toggle texture mode/object mode
         bpy.ops.paint.texture_paint_toggle()
@@ -511,7 +511,7 @@ class RotateCanvasCCW(bpy.types.Operator):
                     proportional='DISABLED',
                     proportional_edit_falloff='SMOOTH',
                     proportional_size=1)
-        bpy.ops.view3d.camera_to_view_selected()
+        #bpy.ops.view3d.camera_to_view_selected()
 
         #toggle texture mode / object mode
         bpy.ops.paint.texture_paint_toggle()
@@ -545,7 +545,7 @@ class RotateCanvasCW(bpy.types.Operator):
                     proportional='DISABLED',
                     proportional_edit_falloff='SMOOTH',
                     proportional_size=1)
-        bpy.ops.view3d.camera_to_view_selected()
+        #bpy.ops.view3d.camera_to_view_selected()
 
         #toggle texture mode / object mode
         bpy.ops.paint.texture_paint_toggle()
@@ -569,28 +569,28 @@ class CanvasResetrot(bpy.types.Operator):
 
     def execute(self, context):
         #init
-        obj = context.active_object
-        _obName = obj.name
-        _camName = "Camera_" + _obName
+        #obj = context.active_object
+        #_obName = obj.name
+        #_camName = "Camera_" + _obName
 
         #reset canvas rotation
         bpy.ops.object.rotation_clear()
-        bpy.ops.view3d.camera_to_view_selected()
+        #bpy.ops.view3d.camera_to_view_selected()
 
-        for cam  in bpy.data.objects:
-            if cam.name == _camName:
-                cam.select = True
-                context.scene.objects.active = cam
+        #for cam  in bpy.data.objects:
+            #if cam.name == _camName:
+                #cam.select = True
+                #context.scene.objects.active = cam
                 #activate on composition guides
-                context.object.data.show_guide = {'CENTER',
-                            'CENTER_DIAGONAL', 'THIRDS', 'GOLDEN',
-                            'GOLDEN_TRIANGLE_A', 'GOLDEN_TRIANGLE_B',
-                            'HARMONY_TRIANGLE_A', 'HARMONY_TRIANGLE_B'}
+                #context.object.data.show_guide = {'CENTER',
+                            #'CENTER_DIAGONAL', 'THIRDS', 'GOLDEN',
+                            #'GOLDEN_TRIANGLE_A', 'GOLDEN_TRIANGLE_B',
+                            #'HARMONY_TRIANGLE_A', 'HARMONY_TRIANGLE_B'}
 
-        bpy.ops.object.select_all(action='DESELECT')
-        ob = bpy.data.objects[_obName]
-        ob.select = True
-        context.scene.objects.active = ob
+        #bpy.ops.object.select_all(action='DESELECT')
+        #ob = bpy.data.objects[_obName]
+        #ob.select = True
+        #context.scene.objects.active = ob
         return {'FINISHED'}
 
 #--------------------------------------------------Curve Bezier to Poly
