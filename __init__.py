@@ -787,7 +787,9 @@ class ArtistPanel(bpy.types.Panel):
 
         col = box.column(align = True)
         ipaint = context.tool_settings.image_paint
-        col.prop(ipaint, "use_stencil_layer", text="Use stencil mask")
+        row = col.row(align = True)
+        row.prop(ipaint, "use_stencil_layer", text="Use stencil mask")
+        row.prop(ipaint, "invert_stencil", text="Invert the mask", icon='IMAGE_ALPHA')
 
         col.label(text="Mirror")
         row = col.row(align = True)
