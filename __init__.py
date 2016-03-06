@@ -768,7 +768,7 @@ class ArtistPanel(bpy.types.Panel):
         col.label(text="Object Masking Tools")
         row = col.row(align = True)
         row.operator("object.curve_2dpoly", \
-                    text = "A. 2D Mask Maker",a
+                    text = "A. 2D Mask Maker",
                     icon = 'PARTICLE_POINT')
         row.operator("object.curve_unwrap", \
                     text = "B. Close Mask & Unwrap",
