@@ -22,7 +22,7 @@
 # <pep8 compliant>
 
 bl_info = {"name": "Paint Artist Panel",
-           "author": "CDMJ, Spirou4D",
+           "author": "CDMJ, Spirou4D, proxe",
            "version": (1, 0, 6),
            "blender": (2, 76, 0),
            "location": "Toolbar > Misc Tab > Artist Panel",
