@@ -664,10 +664,9 @@ class CloseCurveunwrap(bpy.types.Operator):
 
         return {'FINISHED'}
 
-#------------------------------------------------------Gpencil to Mask in one step
 class TraceSelection(bpy.types.Operator):
     """Convert gpencil to CURVE"""
-    bl_idname = "artist_panel.trace_selection"
+    bl_idname = "artist_paint.trace_selection"
 
 
     bl_label = "Convert Gpencil to Mask and UV Project"
@@ -680,7 +679,8 @@ class TraceSelection(bpy.types.Operator):
 
         bpy.ops.gpencil.convert(type='CURVE', use_timing_data=True)
         bpy.ops.gpencil.data_unlink()
-
+        bpy.ops.paint.texture_paint_toggle()
+        
         bpy.ops.object.select_by_type(type = 'CURVE')
         bpy.context.scene.objects.active = bpy.data.objects["GP_Layer"]
 
