@@ -934,6 +934,27 @@ class BorderCrop(Operator):
         bpy.context.scene.render.use_crop_to_border = True
  
         return {'FINISHED'}
+#-------------------------------------------------border crop on
+class BorderCrop(Operator):
+    """Turn on Border Crop in Render Settings"""
+    bl_description = "Border Crop OFF"
+    bl_idname = "artist_paint.border_uncrop"
+    bl_label = ""
+    bl_options = {'REGISTER','UNDO'}
+ 
+    @classmethod
+    def poll(self, context):
+        #obj =  context.active_object
+        #return obj is not None and context.active_object.type == 'MESH'
+        rs = context.scene.render
+        return rs.use_border == True and rs.use_crop_to_border == True
+ 
+    def execute(self, context):
+ 
+        bpy.context.scene.render.use_border = False
+        bpy.context.scene.render.use_crop_to_border = False
+ 
+        return {'FINISHED'}
  
  
 ##############################################################  panel
@@ -982,13 +1003,16 @@ class ArtistPanel(Panel):
                 text="Create Brush Maker Scene",
                 icon='OUTLINER_OB_CAMERA')
         col.separator()
-        col.operator("artist_paint.cameraview_paint",
-                    text = "Add Shaderless Painting Camera",
+        row = col.row(align = True)
+        row.operator("artist_paint.cameraview_paint",
+                    text = "Shadeless Painting Camera",
                     icon = 'RENDER_REGION')
-        col.separator()
-        col.operator("artist_paint.border_crop",
-                    text = "Border Crop ON",
+        row.operator("artist_paint.border_crop",
+                    text = "",
                     icon = 'STICKY_UVS_VERT')
+        row.operator("artist_paint.border_uncrop",
+                    text = "",
+                    icon = 'CLIPUV_DEHLT')
  
  
         box = layout.box()
