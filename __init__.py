@@ -447,22 +447,6 @@ class CameraviewPaint(Operator):
         context.object.data.type = 'ORTHO'
         context.object.data.dof_object= obj
 
-        #move cam up in Z by 1 unit
-        #bpy.ops.transform.translate(value=(0, 0, 1),
-                    #constraint_axis=(False, False, True),
-                    #constraint_orientation='GLOBAL',
-                   # mirror=False,
-                   #proportional='DISABLED',
-                    #proportional_edit_falloff='SMOOTH',
-                    #proportional_size=1)
-
-        #switch on composition guides for use in cameraview paint
-        #context.object.data.show_guide = {'CENTER',
-                            #'CENTER_DIAGONAL', 'THIRDS', 'GOLDEN',
-                           # #'GOLDEN_TRIANGLE_A', 'GOLDEN_TRIANGLE_B',
-                           # 'HARMONY_TRIANGLE_A', 'HARMONY_TRIANGLE_B'
-                            #}
-
         #resolution
         rnd = bpy.data.scenes[0].render
         rndx = rnd.resolution_x = select_mat[0]
@@ -491,7 +475,7 @@ class CameraviewPaint(Operator):
 #-------------------------------------------------camera guides
 class CamGuides(Operator):
     """Turn on Camera Guides"""
-    bl_description = "Camera Guides On"
+    bl_description = "Camera Guides On/Off Toggle"
     bl_idname = "artist_paint.camera_guides"
     bl_label = ""
     bl_options = {'REGISTER','UNDO'}
