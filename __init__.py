@@ -503,21 +503,21 @@ class BorderCrop(Operator):
 
     @classmethod
     def poll(self, context):
-        rs = context.scene.render
         A = context.mode == 'PAINT_TEXTURE'
         return A 
 
     def execute(self, context):
-        render = context.scene.render
-        if render.use_border == False:
-            render.use_border = True
+        rs = context.scene.render
+        #render = context.scene.render
+        if rs.use_border == False:
+            rs.use_border = True
         else:
-            render.use_border = False
+            rs.use_border = False
             
-        if render.use_crop_to_border == False:
-            render.use_crop_to_border = True
+        if rs.use_crop_to_border == False:
+            rs.use_crop_to_border = True
         else:
-            render.use_crop_to_border = False
+            rs.use_crop_to_border = False
 
         return {'FINISHED'}
 
