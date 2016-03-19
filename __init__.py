@@ -265,7 +265,7 @@ class SaveImage(Operator):
         return {'FINISHED'}
 
 
-#-------------------------------------------------image save
+#-------------------------------------------------image save increment
 class SaveIncremImage(Operator):
     """Save Incremential Images"""
     bl_description = ""
@@ -493,11 +493,10 @@ class CamGuides(Operator):
                 
         return {'FINISHED'}
 
-
-#-------------------------------------------------border crop on
+#-------------------------------------------------border crop on/off
 class BorderCrop(Operator):
     """Turn on Border Crop in Render Settings"""
-    bl_description = "Border Crop ON"
+    bl_description = "Border Crop ON/OFF"
     bl_idname = "artist_paint.border_crop"
     bl_label = ""
     bl_options = {'REGISTER','UNDO'}
@@ -506,39 +505,21 @@ class BorderCrop(Operator):
     def poll(self, context):
         rs = context.scene.render
         A = context.mode == 'PAINT_TEXTURE'
-        B = rs.use_border == False
-        C = rs.use_crop_to_border == False
-        return A and B and C
+        return A 
 
     def execute(self, context):
         render = context.scene.render
-        render.use_border = True
-        render.use_crop_to_border = True
+        if render.use_border == False:
+            render.use_border = True
+        else:
+            render.use_border = False
+            
+        if render.use_crop_to_border == False:
+            render.use_crop_to_border = True
+        else:
+            render.use_crop_to_border = False
+
         return {'FINISHED'}
-
-
-#-------------------------------------------------border crop off
-class BorderCrop(Operator):
-    """Turn on Border Crop in Render Settings"""
-    bl_description = "Border Crop OFF"
-    bl_idname = "artist_paint.border_uncrop"
-    bl_label = ""
-    bl_options = {'REGISTER','UNDO'}
-
-    @classmethod
-    def poll(self, context):
-        rs = context.scene.render
-        A = context.mode == 'PAINT_TEXTURE'
-        B = rs.use_border == True
-        C = rs.use_crop_to_border == True
-        return A and B and C
-
-    def execute(self, context):
-        render = context.scene.render
-        render.use_border = False
-        render.use_crop_to_border = False
-        return {'FINISHED'}
-
 
 #-------------------------------------------Gpencil to Mask in one step
 class TraceSelection(Operator):
@@ -1137,9 +1118,6 @@ class ArtistPanel(Panel):
         row.operator("artist_paint.border_crop",
                     text = "",
                     icon = 'STICKY_UVS_VERT')
-        row.operator("artist_paint.border_uncrop",
-                    text = "",
-                    icon = 'CLIPUV_DEHLT')
         row.operator("artist_paint.camera_guides",
                     text = "",
                     icon = 'MOD_LATTICE')
