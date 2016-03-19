@@ -23,7 +23,7 @@
 
 bl_info = {"name": "Paint Artist Panel",
            "author": "CDMJ, Spirou4D",
-           "version": (1, 0, 6),
+           "version": (1, 0, 8),
            "blender": (2, 76, 0),
            "location": "Toolbar > Misc Tab > Artist Panel",
            "description": "Art Macros.",
