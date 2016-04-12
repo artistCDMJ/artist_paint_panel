@@ -380,6 +380,38 @@ class BrushMakerScene(Operator):
                 break # this will break the loop after the first ran
         return {'FINISHED'}
 
+#-------------------------------------------------cameraview paint
+class OrientationPaint(bpy.types.Operator):
+    """fast orientation to normal view paint"""
+    bl_description = ""
+    bl_idname = "artist_paint.orientation_paint"
+    bl_label = "Orientation Paint"
+    bl_options = {'REGISTER','UNDO'}
+
+    @classmethod
+    def poll(self, context):
+        obj =  context.active_object
+        return obj is not None and context.active_object.type == 'MESH'
+
+    def execute(self, context):
+        #init
+        
+        context.space_data.viewport_shade = 'TEXTURED'  #texture draw
+        
+        bpy.ops.paint.texture_paint_toggle()
+        bpy.ops.object.editmode_toggle()
+        
+        bpy.ops.view3d.viewnumpad(type='TOP', align_active=True)
+        
+        bpy.ops.object.editmode_toggle()
+        bpy.ops.paint.texture_paint_toggle()
+        bpy.context.object.data.use_paint_mask = True
+
+        
+
+        return {'FINISHED'}
+
+
 
 #-------------------------------------------------cameraview paint
 class CameraviewPaint(Operator):
@@ -1110,6 +1142,9 @@ class ArtistPanel(Panel):
         col.operator("artist_paint.create_brush_scene",
                 text="Create Brush Maker Scene",
                 icon='OUTLINER_OB_CAMERA')
+        col.operator("artist_paint.orientation_paint",
+                text="Align Selection to View 3D Paint",
+                icon='ERROR')
         col.separator()
         row = col.row(align = True)
         row.operator("artist_paint.cameraview_paint",
