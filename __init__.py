@@ -46,7 +46,8 @@ import math
 import os
 SEP = os.sep
 
-
+MaskMessage = "Name the mask, please..."
+CurveMessage = "name the curve, please..."
 ########################
 #      Properties      #
 ########################
@@ -93,6 +94,8 @@ def pollAPT(self, context):
 
     if obj is not None:
         return obj.name == main_canvas_name
+    else:
+        return  False
 
 #------------------------------------------------Create a collection
 class SceneCustomCanvas(bpy.types.PropertyGroup):
@@ -691,13 +694,13 @@ class CameraviewPaint(Operator):
         bpy.ops.view3d.snap_selected_to_cursor(use_offset=False)
 
         #add camera
-        bpy.ops.object.camera_add(view_align=False,
-                        enter_editmode=False,
-                        location=(0, 0, 0),
-                        rotation=(0, 0, 0),
-                        layers=(True, False, False, False, False,
-                                False, False, False, False, False,
-                                False, False, False, False, False,
+        bpy.ops.object.camera_add(view_align=False,\
+                        enter_editmode=False,\
+                        location=(0, 0, 0),\
+                        rotation=(0, 0, 0),\
+                        layers=(True, False, False, False, False,\
+                                False, False, False, False, False,\
+                                False, False, False, False, False,\
                                 False, False, False, False, False))
 
         context.scene.render.resolution_percentage = 100   #ratio full
@@ -736,6 +739,7 @@ class CameraviewPaint(Operator):
         context.scene.objects.active = obj
         bpy.ops.paint.texture_paint_toggle()
         scene.game_settings.material_mode = 'GLSL'
+        context.space_data.lock_camera = False
         return {'FINISHED'}
 
 
@@ -906,6 +910,14 @@ class TraceSelection(Operator):
                 break
             return A and B and C
 
+    mask_name = StringProperty(name="Mask name")
+
+    def invoke(self, context, event):
+        global MaskMessage
+        self.mask_name = MaskMessage
+        return context.window_manager.invoke_props_dialog(self)
+
+
     def execute(self, context):
         scene = context.scene
         tool_settings = scene.tool_settings
@@ -916,6 +928,7 @@ class TraceSelection(Operator):
         meshOPS = bpy.ops.mesh
         cvOPS = bpy.ops.curve
 
+        #----------------------------------------------INIT MAIN CANVAS
         if scene.artist_paint is not None:      #if main canvas isn't erased
             if len(scene.artist_paint) !=0:
                 for main_canvas in scene.artist_paint: #look main canvas name
@@ -928,7 +941,9 @@ class TraceSelection(Operator):
                         break
         else:
             return {'FINISHED'}
-        #--------------------------------------------------CURVE
+        _mkName = self.mask_name
+
+        #----------------------------------------------CONVERT TO CURVE
         obj =  context.active_object             #save the main Canvas
         objRz = obj.rotation_euler[2]
 
@@ -941,18 +956,9 @@ class TraceSelection(Operator):
                 if cvP.type == "CURVE":
                     lrs.append(cvP)
         cv = lrs[-1]                             #select 'GP_Layer'curve
-        scene.objects.active = cv                #active the curve
 
-        Mks = []                                 #search '+ Mask' objects
-        for mk in bpy.data.objects:
-            if mk.name.find('+ Mask') != -1:
-                if mk.type == "MESH":
-                    Mks.append(mk)
-        if len(Mks) !=0:
-            _cvName = Mks[-1].name
-        else:
-            _cvName = "+ Mask"
-        cv.name = _cvName                        #name the curve here
+        scene.objects.active = cv                #active the curve
+        cv.name = "msk_"+ _mkName                #name the curve here
 
         objOPS.origin_set(type='ORIGIN_GEOMETRY')#origine to geometry
         objOPS.editmode_toggle()                 #return in edit mode
@@ -960,13 +966,38 @@ class TraceSelection(Operator):
         cv.data.dimensions = '2D'                #transform line to face
         objOPS.editmode_toggle()                 #return in Object mode
 
-        #------------------------------------------------------MESH
+        #----------------------------------------DUPLICAT-PARENT 2x curves
+        context.space_data.layers[19] = True     #layer20 temporary visible
+        obj.select = False
+        cv.select = True
+        objOPS.duplicate_move()
+        cvDupli = context.object
+        cvDupli.name = 'cvs_' +  _mkName
+        #parent curveDupli to Canvas
+        cvDupli.select = True
+        scene.objects.active = obj               #select the Canvas
+        objOPS.parent_set(type='OBJECT',\
+                            keep_transform=False)#parent Curve to Canvas
+        objOPS.move_to_layer(layers=(False, False, False, False,\
+                                False, False, False, False, False,\
+                                False, False, False, False, False,\
+                                False, False, False, False, False,\
+                                True))           #move to layer20
+        context.space_data.layers[19] = False    #layer20 stay invisible
+        cvDupli.select = False
+        #parent curve to Canvas
+        cv.select = True
+        scene.objects.active = obj               #select the Canvas
+        objOPS.parent_set(type='OBJECT',\
+                            keep_transform=False)#parent curve to Canvas
+
+
+        #------------------------------------------------------MESH MASK UV
+        scene.objects.active = cv
         objOPS.convert(target='MESH')            #convert to mesh
 
-        scene.objects.active = obj               #select the Canvas
-        objOPS.parent_set(type='OBJECT',
-                            keep_transform=False)#parent Mask to Canvas
         scene.objects.active = obj               #select the canvas
+        #init rotation
         bpy.ops.transform.rotate(value=-objRz,
                                  axis=(0, 0, 1),
                                  constraint_axis=(False, False, True),
@@ -974,14 +1005,16 @@ class TraceSelection(Operator):
 
         scene.objects.active = cv                #select the Mask
         objOPS.editmode_toggle()                 #return in edit mode
+        meshOPS.select_all(action='TOGGLE')      #select points
+        meshOPS.normals_make_consistent(inside=False)#Normals ouside
         bpy.ops.uv.project_from_view(camera_bounds=True,
-                                    correct_aspect=True,
+                                    correct_aspect=False,
                                     scale_to_bounds=False)#uv cam unwrap
         for mat in bpy.data.materials:           #Material and texture
             if mat.name == canvasName :          #if mainCanvas Mat exist
                 cv.data.materials.append(mat)    #add main canvas mat
                 paintOPS.add_texture_paint_slot(type='DIFFUSE_COLOR',
-                                            name=_cvName,
+                                            name=cv.name,
                                             width=canvasDimX,
                                             height=canvasDimY,
                                             color=(1, 1, 1, 0),
@@ -992,18 +1025,24 @@ class TraceSelection(Operator):
         objOPS.editmode_toggle()                 #return in object mode
 
         scene.objects.active = obj               #select the Canvas
+        #return to rotation state
         bpy.ops.transform.rotate(value=objRz,
                                  axis=(0, 0, 1),
                                  constraint_axis=(False, False, True),
                                  constraint_orientation='GLOBAL')
-                                                 #rotate to rotation state
+
+        #------------------------------------------------------OPTIONS
+        scene.objects.active = cv                #return on the mask
+        if context.mode != 'PAINT_TEXTURE':
+            paintOPS.texture_paint_toggle()          #return in paint mode
+        context.object.data.use_paint_mask = True
         tool_settings.image_paint.use_occlude = False
         tool_settings.image_paint.use_backface_culling = False
         tool_settings.image_paint.use_normal_falloff = False
         tool_settings.image_paint.seam_bleed = 0
-        scene.objects.active = cv                #return on the mask
-        paintOPS.texture_paint_toggle()          #return in paint mode
+
         return {'FINISHED'}
+
 
 
 #-----------------------------------------------Curve Bezier to Poly
@@ -1016,11 +1055,23 @@ class CurvePoly2d(Operator):
 
     @classmethod
     def poll(self, context):
+        scene = context.scene
         obj =  context.active_object
+        if scene.artist_paint is not None:      #if main canvas isn't erased
+            if len(scene.artist_paint) !=0:
+                for main_canvas in scene.artist_paint: #look main canvas name
+                    canvasName = (main_canvas.filename)[:-4]   #find the name of the maincanvas
         if obj is not None:
-            A = context.mode == 'PAINT_TEXTURE'
-            B = obj.type == 'MESH'
+            A = obj.name==canvasName
+            B = context.mode == 'PAINT_TEXTURE'
             return A and B
+
+    curve_name = StringProperty(name="Curve name")
+
+    def invoke(self, context, event):
+        global MaskMessage
+        self.curve_name = CurveMessage
+        return context.window_manager.invoke_props_dialog(self)
 
     def execute(self, context):
         obj = context.active_object            #selected canvas object
@@ -1037,14 +1088,14 @@ class CurvePoly2d(Operator):
                                  False, False, False, False, False,
                                  False, False, False, False, False,
                                  False, False, False, False, False,
-                                 False))#add curve
-        cv = context.object                 #save original curve
+                                 False))        #add curve
+        cv = context.object                     #save original curve
 
-        objOPS.editmode_toggle()            #toggle curve edit
-        cvOPS.spline_type_set(type= 'POLY') #change to poly spline
-        cv.data.dimensions = '2D'           #change to 2d
-        cvOPS.delete(type='VERT')           #delete vertice
-        objOPS.editmode_toggle()            #return in  object mode
+        objOPS.editmode_toggle()                #toggle curve edit
+        cvOPS.spline_type_set(type= 'POLY')     #change to poly spline
+        cv.data.dimensions = '2D'               #change to 2d
+        cvOPS.delete(type='VERT')               #delete vertice
+        objOPS.editmode_toggle()                #return in  object mode
 
         context.scene.objects.active = obj      #select mainCanvas
         objOPS.parent_set(type='OBJECT',
@@ -1052,20 +1103,12 @@ class CurvePoly2d(Operator):
                           keep_transform=False) #parent Mask to canvas
 
         #Name the curve with "+ Mask.xxx" or "+ Mask"(no mask)
-        context.scene.objects.active = cv     #return on the curve
-        Mks = []
-        for mk in bpy.data.objects:
-            if mk.name.find('+ Mask') != -1:
-                if mk.type == "MESH":
-                    Mks.append(mk)
-        if len(Mks) !=0:
-            _cvName = Mks[-1].name
-        else:
-            _cvName = "+ Mask"
-        cv.name = _cvName                    #name it
+        context.scene.objects.active = cv       #return on the curve
+        _cvName = self.curve_name
+        cv.name = "cvs_" + _cvName              #name it
 
-        objOPS.editmode_toggle()                 #toggle curve edit
-        cvOPS.vertex_add()                #first: add a vertice
+        objOPS.editmode_toggle()                #toggle curve edit
+        cvOPS.vertex_add()                      #first: add a vertice
         cvOPS.handle_type_set(type='VECTOR')
         context.space_data.show_manipulator = True
         return {'FINISHED'}
@@ -1083,75 +1126,124 @@ class CloseCurveUnwrap(Operator):
     def poll(self, context):
         obj =  context.active_object
         if obj is not None and obj.name is not None:
-            if obj.name.find('Mask')!=-1:
+            if obj.name.find('cvs')!=-1:
                 A = obj.mode == 'EDIT'
                 B = obj.type == 'CURVE'
                 return A and B
 
     def execute(self, context):
         scene = context.scene
-        cv = context.active_object              #the vector curve
-        _cvName = cv.name
+        tool_settings = scene.tool_settings
+        cv = context.active_object               #the vector curve
+        _cvName = cv.name[4:]                    #type "cvs_xxxxxx"
+        obj = cv.parent                          #the main canvas
+        objRz = obj.rotation_euler[2]            #if mainCanvas rotated
+
         #Operators
         cvOPS = bpy.ops.curve
         objOPS = bpy.ops.object
         meshOPS = bpy.ops.mesh
         paintOPS = bpy.ops.paint
 
+        #----------------------------------------INIT
+        if scene.artist_paint is not None:      #if main canvas isn't erased
+            if len(scene.artist_paint) !=0:
+                for main_canvas in scene.artist_paint: #look main canvas name
+                    canvasName = (main_canvas.filename)[:-4]   #find the name of the maincanvas
+                    canvasDimX = main_canvas.dimX
+                    canvasDimY = main_canvas.dimY
+                    break
+        else:
+            return {'FINISHED'}
+
+        #----------------------------------------------CURVE
         cvOPS.select_all(action='TOGGLE')        #Init selection
         cvOPS.select_all(action='TOGGLE')        #select points
         cvOPS.cyclic_toggle()                    #close spline 'create faces
         cv.data.dimensions = '2D'                #change the space
         objOPS.editmode_toggle()                 #return to object mode
-        objOPS.convert(target='MESH')            #convert to mesh
 
-        obj = context.object                     #save the mesh mask
-        objPar = obj.parent
-        objRz = objPar.rotation_euler[2]         #if mainCanvas rotated
-        objOPS.editmode_toggle()                 #toggle edit mode
-        meshOPS.select_all(action='TOGGLE')      #select all
-        meshOPS.normals_make_consistent(inside=False)#Normals ouside
-        objOPS.editmode_toggle()                 #toggle object mode
-        context.scene.objects.active = objPar
+        #----------------------------------------DUPLICAT-PARENTt 2x curves
+        obj.select = False
+        cv.select = True
+        if cv.layers[0]==False:
+            objOPS.move_to_layer(layers=(True, False, False, False,
+                                    False, False, False, False, False,
+                                    False, False, False, False, False,
+                                    False, False, False, False, False,
+                                    False))           #move to layer1
+        objOPS.duplicate_move()
+        cvDupli = context.object
+
+        #parent curveDupli to Canvas
+        cv.select = False
+        cvDupli.select = True
+        scene.objects.active = obj               #select the Canvas
+        objOPS.parent_set(type='OBJECT',
+                            keep_transform=True)#parent Curve to Canvas
+        objOPS.move_to_layer(layers=(False, False, False, False,
+                                False, False, False, False, False,
+                                False, False, False, False, False,
+                                False, False, False, False, False,
+                                True))           #move to layer20
+        context.space_data.layers[19] = False    #layer20 invisible
+        cvDupli.select = False
+        #parent curve to Canvas
+        cv.select = True
+        scene.objects.active = obj               #select the Canvas
+        objOPS.parent_set(type='OBJECT',
+                            keep_transform=False)#parent curve to Canvas
+
+        #--------------------------------------------------NEW MESH MASK
+        scene.objects.active = cv
+        objOPS.convert(target='MESH')            #convert to mesh
+        mk = context.object                      #overwrite cv with new mask
+        mk.name = "msk_" + _cvName               #name mask with curve name
+        scene.objects.active = obj
+        #init rotation
         bpy.ops.transform.rotate(value=-objRz,
                                  axis=(0, 0, 1),
                                  constraint_orientation='GLOBAL')
-        context.scene.objects.active = obj
+
+        scene.objects.active = mk
         objOPS.editmode_toggle()                 #mask in edit mode
+        meshOPS.select_all(action='TOGGLE')      #select all
+        bpy.ops.mesh.edge_face_add()
+        meshOPS.normals_make_consistent(inside=False)#Normals outside
         bpy.ops.uv.project_from_view(camera_bounds=True,
                                     correct_aspect=True,
                                     scale_to_bounds=False)#uv cam unwrap
+
+        for mat in bpy.data.materials:
+            if mat.name == canvasName :      #if mainCanvas Mat exist
+                cv.data.materials.append(mat) #add main canvas mat
+                paintOPS.add_texture_paint_slot(type='DIFFUSE_COLOR',
+                                            name=mk.name,
+                                            width=canvasDimX,
+                                            height=canvasDimY,
+                                            color=(1, 1, 1, 0),
+                                            alpha=True,
+                                            generated_type='BLANK',
+                                            float=False)
+                break
         objOPS.editmode_toggle()                 #mask in object mode
-        context.scene.objects.active = objPar
+
+        scene.objects.active = obj              #Select the  maincanvas
+        #return to rotation state
         bpy.ops.transform.rotate(value=objRz,
                                  axis=(0, 0, 1),
                                  constraint_orientation='GLOBAL')
-        context.scene.objects.active = obj
-        obj.name = _cvName                       #name the new mask
-        paintOPS.texture_paint_toggle()          #return in paint mode
 
-        if scene.artist_paint is not None:       #if main canvas isn't erased
-            if len(scene.artist_paint) !=0:
-                for main_canvas in scene.artist_paint: #look main canvas name
-                    canvasName = (main_canvas.filename)[:-4]   #find the name of the maincanvas
-                    canvasDimX = main_canvas.dimX
-                    canvasDimY =  main_canvas.dimY
-                for mat in bpy.data.materials:
-                    if mat.name == canvasName :      #if mainCanvas Mat exist
-                        obj.data.materials.append(mat) #add main canvas mat
-                        paintOPS.add_texture_paint_slot(type='DIFFUSE_COLOR',
-                                                    name=_cvName,
-                                                    width=canvasDimX,
-                                                    height=canvasDimY,
-                                                    color=(1, 1, 1, 0),
-                                                    alpha=True,
-                                                    generated_type='BLANK',
-                                                    float=False)
-                        break
-
-        context.scene.objects.active = obj.parent  #Select the  maincanvas
+        #------------------------------------------------------OPTIONS
+        cvDupli.name = "cvs_" + _cvName
+        scene.objects.active = mk
         if context.mode != 'PAINT_TEXTURE':
-            paintOPS.texture_paint_toggle()        #return Paint mode
+            paintOPS.texture_paint_toggle()     #return in Paint mode
+        context.object.data.use_paint_mask = True
+        tool_settings.image_paint.use_occlude = False
+        tool_settings.image_paint.use_backface_culling = False
+        tool_settings.image_paint.use_normal_falloff = False
+        tool_settings.image_paint.seam_bleed = 0
         return {'FINISHED'}
 
 
@@ -1189,7 +1281,7 @@ class CurvePolyInvert(Operator):
         paintOPS.texture_paint_toggle()          #return in object mode
         objPar.select = True                     #Select the canvas
         scene.objects.active = objA              #active the mask
-        objOPS.duplicate_move()                  #duplicate mesh objects
+        objOPS.duplicate_move()                  #duplicate object
         objOPS.join()                            #join active & selected mesh
         objOPS.convert(target='CURVE')           #convert active in curve
 
@@ -1208,38 +1300,38 @@ class CurvePolyInvert(Operator):
                           xmirror=False,
                           keep_transform=False)  #parent: Mask to Canvas
 
-        scene.objects.active = objPar           #select again the Canvas
+        scene.objects.active = objPar            #select again the Canvas
         bpy.ops.transform.rotate(value=-objRz,
                                  axis=(0, 0, 1),
                                  constraint_orientation='GLOBAL')
 
-        scene.objects.active = cv               #name the Inverted Mask
+        scene.objects.active = cv                #name the Inverted Mask
         cv.name = "- " + objA.name[1:]
-        cv.location[2] = 0.01                   #Raise the Z level inv. mask
-        objOPS.editmode_toggle()                #toggle edit mode
+        cv.location[2] = 0.01                    #Raise the Z level inv. mask
+        objOPS.editmode_toggle()                 #toggle edit mode
         bpy.ops.uv.project_from_view(camera_bounds=True,
                                     correct_aspect=True,
                                     scale_to_bounds=False)#uv cam unwrap
-        objOPS.editmode_toggle()                #return object mode
+        objOPS.editmode_toggle()                 #return object mode
 
-        scene.objects.active = objPar           #select the Canvas
+        scene.objects.active = objPar            #select the Canvas
         bpy.ops.transform.rotate(value=objRz,
                                  axis=(0, 0, 1),
                                  constraint_orientation='GLOBAL')
 
         #---------------------------------------------MATERIAL & TEXTURE
-        scene.objects.active = cv               #Active the Inverted Mask
-        paintOPS.texture_paint_toggle()         #return Paint  mode
-        if scene.artist_paint is not None:      #if main canvas isn't erased
+        scene.objects.active = cv                #Active the Inverted Mask
+        paintOPS.texture_paint_toggle()          #return Paint  mode
+        if scene.artist_paint is not None:       #if main canvas isn't erased
             if len(scene.artist_paint) !=0:
                 for main_canvas in scene.artist_paint: #look main canvas name
                     canvasName = (main_canvas.filename)[:-4]#find the name of the maincanvas
                     canvasDimX = main_canvas.dimX
                     canvasDimY =  main_canvas.dimY
                 for mat in bpy.data.materials:
-                    if mat.name == canvasName : #if mainCanvas Mat exist
+                    if mat.name == canvasName :  #if mainCanvas Mat exist
                         for mt in cv.data.materials:
-                            if mt == canvasName:#look don't exist for this obj
+                            if mt == canvasName: #look don't exist for this obj
                                 break
                         cv.data.materials.append(mat) #add mainCanvas mat
                         paintOPS.add_texture_paint_slot(type='DIFFUSE_COLOR',
