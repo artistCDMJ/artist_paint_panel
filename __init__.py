@@ -276,33 +276,6 @@ class MTViewMode(Operator):
         return {'FINISHED'}
 
 
-class AddDeftImage(Operator):
-    '''Create and assign a new default image to the object'''
-    bl_idname = "artist_paint.add_default_image"
-    bl_label = "Add default image & one diffuse texture"
-    bl_options = {'REGISTER','UNDO'}
-
-    @classmethod
-    def poll(cls, context):
-        if context.active_object is not None:
-            ao = context.active_object
-            A = ao.type=='MESH'
-            return B
-
-    def invoke(self, context, event):
-        ob = context.active_object
-        mat = bpy.data.materials.new("default")
-
-        #Add texture to the mat
-        tex = bpy.data.textures.new("default", 'IMAGE')
-        img = bpy.data.images.new("default", 1024, 1024, alpha=True)
-        ts = mat.texture_slots.add()
-        tex.image = img
-        ts.texture = tex
-
-        ob.data.materials.append(mat)
-        return {'FINISHED'}
-
 #------------------------------------------------Reset main canvas
 class ArtistPaintLoadtInit(Operator):
     bl_idname = "artist_paint.load_init"
@@ -351,6 +324,7 @@ class ArtistPaintLoad(Operator):
         fileName = os.path.split(filePATH)[-1]
         fileDIR = os.path.dirname(filePATH)
 
+        bpy.ops.view3d.snap_cursor_to_center()
         bpy.ops.import_image.to_plane(\
                         files=[{"name":fileName,"name":fileName}],
                         directory=fileDIR,
@@ -359,7 +333,6 @@ class ArtistPaintLoad(Operator):
                         filter_glob="",
                         use_transparency=True,
                         relative=False)
-
         obj = context.active_object
         select_mat = obj.data.materials[0].texture_slots[0].\
                                             texture.image.size[:]
@@ -377,6 +350,9 @@ class ArtistPaintLoad(Operator):
             print(str(main_canvas.dimX))
             print(str(main_canvas.dimY))
 
+        #set the cursor snap on object faces
+        userpref = context.user_preferences
+        userpref.view.use_mouse_depth_cursor = True
         return {'FINISHED'}
 
 
@@ -1054,16 +1030,9 @@ class CurvePoly2d(Operator):
 
     @classmethod
     def poll(self, context):
-        scene = context.scene
-        obj =  context.active_object
-        if scene.artist_paint is not None:      #if main canvas isn't erased
-            if len(scene.artist_paint) !=0:
-                for main_canvas in scene.artist_paint: #look main canvas name
-                    canvasName = (main_canvas.filename)[:-4]   #find the name of the maincanvas
-        if obj is not None:
-            A = obj.name==canvasName
-            B = context.mode == 'PAINT_TEXTURE'
-            return A and B
+        A = pollAPT(self, context)
+        B = context.mode == 'PAINT_TEXTURE'
+        return A and B
 
     curve_name = StringProperty(name="Curve name")
 
@@ -1370,6 +1339,43 @@ class CurvePolyInvert(Operator):
         tool_settings.image_paint.use_backface_culling = False
         tool_settings.image_paint.use_normal_falloff = False
         tool_settings.image_paint.seam_bleed = 0
+        return {'FINISHED'}
+
+
+class SetSymmetryOrigin(Operator):
+    bl_idname = "artist_paint.set_symmetry_origin"
+    bl_label = "Set Symmetry Origin"
+
+    @classmethod
+    def poll(self, context):
+        A = pollAPT(self, context)
+        B = context.mode == 'PAINT_TEXTURE'
+        return A and B
+
+    def execute(self, context):
+        paintOPS = bpy.ops.paint
+        paintOPS.texture_paint_toggle()                #return in object mode
+        bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
+        paintOPS.texture_paint_toggle()                #return in paint mode
+        return {'FINISHED'}
+
+
+class ResetOrigin(Operator):
+    bl_idname = "artist_paint.reset_origin"
+    bl_label = "Reset Canvas Origin"
+
+    @classmethod
+    def poll(self, context):
+        A = pollAPT(self, context)
+        B = context.mode == 'PAINT_TEXTURE'
+        return A and B
+
+    def execute(self, context):
+        paintOPS = bpy.ops.paint
+        paintOPS.texture_paint_toggle()                #return in object mode
+        bpy.ops.view3d.snap_cursor_to_center()
+        bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
+        paintOPS.texture_paint_toggle()                #return in paint mode
         return {'FINISHED'}
 
 
@@ -1940,9 +1946,12 @@ class ArtistPanel(Panel):
         box = layout.box()
         col = box.column(align = True)          #CANVAS FRAME CONSTRAINT
         row = col.row(align = True)
-        row.label(text="Mirror")                      #MIRROR FLIP
-        row.enabled = pollAPT(self, context)
-
+        row.label(text="Mirror Origin")
+        row.operator("artist_paint.set_symmetry_origin",
+                    text="Set Symetry Origin", icon='VIEW3D_VEC')
+        row.operator("artist_paint.reset_origin",
+                    text="", icon='RECOVER_AUTO')
+        col.separator()
         row = col.row(align = True)
         row.operator("artist_paint.canvas_horizontal",
                     text="Canvas Flip Horizontal",
