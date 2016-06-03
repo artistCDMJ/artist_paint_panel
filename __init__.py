@@ -21,9 +21,9 @@
 
 # <pep8 compliant>
 
-bl_info = {"name": "Paint Artist Panel",
+bl_info = {"name": "Artist Paint Panel",
            "author": "CDMJ, Spirou4D",
-           "version": (1, 00, 0),
+           "version": (1, 53, 0),
            "blender": (2, 77, 0),
            "location": "Toolbar > Misc Tab > Artist Panel",
            "description": "Artist Paint Studio.",
