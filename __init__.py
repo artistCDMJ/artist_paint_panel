@@ -23,7 +23,7 @@
 
 bl_info = {"name": "Artist Paint Panel",
            "author": "CDMJ, Spirou4D",
-           "version": (1, 58, 0),
+           "version": (1, 00, 0),
            "blender": (2, 77, 0),
            "location": "Toolbar > Misc Tab > Artist Panel",
            "description": "Artist Paint Studio.",
@@ -57,9 +57,7 @@ def get_addon_preferences():
     #Par exemple:
     # addon_prefs = get_addon_preferences()
     # addon_prefs.url_smsservice
-
-    addon_preferences = bpy.context.user_preferences.addons[__name__].preferences
-    return addon_preferences
+    return bpy.context.user_preferences.addons[__name__].preferences
 
 #-------------------------------------------get the main canvas datas
 def MainCanvasData(self, context):
@@ -646,7 +644,7 @@ class CameraviewPaint(Operator):
                     canvasName = (main_canvas.filename)[:-4]   #find the name of the maincanvas
                     _camName = "Camera_" + canvasName
                     canvasDimX = main_canvas.dimX
-                    canvasDimY =  main_canvas.dimY
+                    canvasDimY = main_canvas.dimY
                 for obj in scene.objects:
                     if obj.name == canvasName :      #if mainCanvas Mat exist
                         scene.objects.active = obj
@@ -984,7 +982,7 @@ class TraceSelection(Operator):
         meshOPS.normals_make_consistent(inside=False)#Normals ouside
         bpy.ops.uv.project_from_view(camera_bounds=True,
                                     correct_aspect=False,
-                                    scale_to_bounds=False)#uv cam unwrap
+                                    scale_to_bounds=True)#uv cam unwrap
         for mat in bpy.data.materials:           #Material and texture
             if mat.name == canvasName :          #if mainCanvas Mat exist
                 cv.data.materials.append(mat)    #add main canvas mat
@@ -1183,7 +1181,7 @@ class CloseCurveUnwrap(Operator):
         meshOPS.normals_make_consistent(inside=False)#Normals outside
         bpy.ops.uv.project_from_view(camera_bounds=True,
                                     correct_aspect=False,
-                                    scale_to_bounds=False)#uv cam unwrap
+                                    scale_to_bounds=True)#uv cam unwrap
 
         for mat in bpy.data.materials:
             if mat.name == canvasName :          #if mainCanvas Mat exist
@@ -1309,7 +1307,7 @@ class CurvePolyInvert(Operator):
         meshOPS.normals_make_consistent(inside=False)#Normals outside
         bpy.ops.uv.project_from_view(camera_bounds=True,
                                     correct_aspect=False,
-                                    scale_to_bounds=False)#uv cam unwrap
+                                    scale_to_bounds=True)#uv cam unwrap
 
         for mat in bpy.data.materials:
             if mat.name == canvasName :          #if mainCanvas Mat exist
