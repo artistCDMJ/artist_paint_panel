@@ -1341,8 +1341,10 @@ class CurvePolyInvert(Operator):
 
 
 class SetSymmetryOrigin(Operator):
+    """Set Symmetry Origin"""
     bl_idname = "artist_paint.set_symmetry_origin"
     bl_label = "Set Symmetry Origin"
+    bl_description = "Move the symetry origin!"
 
     @classmethod
     def poll(self, context):
@@ -1359,8 +1361,10 @@ class SetSymmetryOrigin(Operator):
 
 
 class ResetOrigin(Operator):
+    """"Reset Canvas Origin"""
     bl_idname = "artist_paint.reset_origin"
     bl_label = "Reset Canvas Origin"
+    bl_description = "Reset the canvas origin!"
 
     @classmethod
     def poll(self, context):
@@ -1824,8 +1828,7 @@ class ArtistPanel(Panel):
             GAA = addon_prefs.guides
 
         toolsettings = context.tool_settings
-        ipaint = context.tool_settings.image_paint
-
+        ipaint = toolsettings.image_paint
 
         box = layout.box()
         col = box.column(align = True)
@@ -1856,7 +1859,7 @@ class ArtistPanel(Panel):
 
         box = layout.box()                             #MACRO
         col = box.column(align = True)
-        col.label(text="Special Macros") #ara
+        col.label(text="Special Macros")               #?
         col.operator("artist_paint.create_brush_scene",
                 text="Create Brush Maker Scene",
                 icon='OUTLINER_OB_CAMERA')
@@ -1880,7 +1883,7 @@ class ArtistPanel(Panel):
         col.separator()
         row = col.row(align = True)
         row1 = row.split(align=True)
-        row1.label(text="Canvas Cam. Setup") #INIT
+        row1.label(text="Canvas Cam. Setup")         #INIT
         row2 = row.split(align=True)
         row2.operator("artist_paint.cameraview_paint",
                     text = "Camera",
@@ -1906,7 +1909,7 @@ class ArtistPanel(Panel):
         col.separator()
         box = layout.box()
         col = box.column(align = True)
-        col.label(text="Canvas Masks Tools") #OBJECTS MASKING TOOLS
+        col.label(text="Canvas Masks Tools")       #OBJECTS MASKING TOOLS
         col.operator("artist_paint.trace_selection",
                     text = "Mesh Mask from Gpencil",
                     icon = 'OUTLINER_OB_MESH')
@@ -1941,16 +1944,29 @@ class ArtistPanel(Panel):
                         icon='IMAGE_ALPHA')
 
 
-        box = layout.box()
-        col = box.column(align = True)          #CANVAS FRAME CONSTRAINT
+        box = layout.box()                        #CANVAS FRAME CONSTRAINT
+        col = box.column(align = True)
         row = col.row(align = True)
-        row.label(text="Mirror Origin")
-        row.operator("artist_paint.set_symmetry_origin",
-                    text="Set Symetry Origin", icon='VIEW3D_VEC')
-        row.operator("artist_paint.reset_origin",
+        row1 = row.split(align=True)
+        row1.label(text="Mirror")
+        row1.scale_x = 0.50
+        row.separator()
+        row2 = row.split(align=True)
+        row2.prop(ipaint, "use_symmetry_x", text="Horizontal", toggle=True)
+        row2.prop(ipaint, "use_symmetry_y", text="Vertical", toggle=True)
+        row2.scale_x = 1.00
+        row.separator()
+        row3 = row.split(align=True)
+        row3.operator("artist_paint.set_symmetry_origin",
+                    text="New", icon='VIEW3D_VEC')
+        row4 = row.split(align=True)
+        row4.operator("artist_paint.reset_origin",
                     text="", icon='RECOVER_AUTO')
+
+
+
         col.separator()
-        row = col.row(align = True)
+        row = col.row(align = True)                     #FLIP
         row.operator("artist_paint.canvas_horizontal",
                     text="Canvas Flip Horizontal",
                     icon='ARROW_LEFTRIGHT')
