@@ -982,7 +982,7 @@ class TraceSelection(Operator):
         meshOPS.normals_make_consistent(inside=False)#Normals ouside
         bpy.ops.uv.project_from_view(camera_bounds=True,
                                     correct_aspect=False,
-                                    scale_to_bounds=True)#uv cam unwrap
+                                    scale_to_bounds=False)#uv cam unwrap
         for mat in bpy.data.materials:           #Material and texture
             if mat.name == canvasName :          #if mainCanvas Mat exist
                 cv.data.materials.append(mat)    #add main canvas mat
@@ -1181,7 +1181,7 @@ class CloseCurveUnwrap(Operator):
         meshOPS.normals_make_consistent(inside=False)#Normals outside
         bpy.ops.uv.project_from_view(camera_bounds=True,
                                     correct_aspect=False,
-                                    scale_to_bounds=True)#uv cam unwrap
+                                    scale_to_bounds=False)#uv cam unwrap
 
         for mat in bpy.data.materials:
             if mat.name == canvasName :          #if mainCanvas Mat exist
