@@ -732,7 +732,7 @@ class BorderCrop(Operator):
         return {'FINISHED'}
 
 
-#-------------------------------------------------border crop on
+#-------------------------------------------------border crop off
 class BorderUnCrop(Operator):
     """Turn off Border Crop in Render Settings"""
     bl_description = "Border Crop OFF"
@@ -747,7 +747,7 @@ class BorderUnCrop(Operator):
         return {'FINISHED'}
 
 
-#-------------------------------------------------border crop on
+#-------------------------------------------------border crop toggle
 class BorderCropToggle(Operator):
     """Set Border Crop in Render Settings"""
     bl_description = "Border Crop On/Off TOGGLE"
@@ -968,7 +968,7 @@ class TraceSelection(Operator):
         #------------------------------------------------------MESH MASK UV
         scene.objects.active = cv
         objOPS.convert(target='MESH')            #convert to mesh
-
+        
         scene.objects.active = obj               #select the canvas
         #init rotation
         bpy.ops.transform.rotate(value=-objRz,
@@ -979,6 +979,7 @@ class TraceSelection(Operator):
         scene.objects.active = cv                #select the Mask
         objOPS.editmode_toggle()                 #return in edit mode
         meshOPS.select_all(action='TOGGLE')      #select points
+        meshOPS.dissolve_faces()                 #dissolve faces
         meshOPS.normals_make_consistent(inside=False)#Normals ouside
         bpy.ops.uv.project_from_view(camera_bounds=True,
                                     correct_aspect=False,
