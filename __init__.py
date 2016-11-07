@@ -2232,7 +2232,8 @@ class ArtistPanel(Panel):
         row4 = row.split(align=True)
         row4.operator("artist_paint.remove_modifiers",
                     text="", icon='RECOVER_LAST')
-ow = layout.row()
+                    
+        row = layout.row()
         
         row.label(text="ALIGN PRESETS")
         box = layout.box()                        #VERTICAL ALIGN
