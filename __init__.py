@@ -1920,6 +1920,119 @@ class RemoveMods(bpy.types.Operator):
                 
             
         return {'FINISHED'}
+class AlignLeft(bpy.types.Operator):
+    """Left Align"""
+    bl_idname = "object.align_left" 
+                                     
+     
+    bl_label = "Align Objects Left"
+    bl_options = { 'REGISTER', 'UNDO' }
+    
+    def execute(self, context):
+
+        scene = context.scene
+
+
+        #new code
+        
+        bpy.ops.object.align(align_mode='OPT_1', relative_to='OPT_4', align_axis={'X'}) #toggle texpaint
+        
+        return {'FINISHED'}
+    
+class AlignCenter(bpy.types.Operator):
+    """Center Align"""
+    bl_idname = "object.align_center" 
+                                     
+     
+    bl_label = "Align Objects Center"
+    bl_options = { 'REGISTER', 'UNDO' }
+    
+    def execute(self, context):
+
+        scene = context.scene
+
+
+        #new code
+        
+        bpy.ops.object.align(align_mode='OPT_2', relative_to='OPT_4', align_axis={'X'}) #toggle texpaint
+        
+        return {'FINISHED'}
+
+class AlignRight(bpy.types.Operator):
+    """Center Align"""
+    bl_idname = "object.align_right" 
+                                     
+     
+    bl_label = "Align Objects Right"
+    bl_options = { 'REGISTER', 'UNDO' }
+    
+    def execute(self, context):
+
+        scene = context.scene
+
+
+        #new code
+        
+        bpy.ops.object.align(align_mode='OPT_3', relative_to='OPT_4', align_axis={'X'}) #toggle texpaint
+        
+        return {'FINISHED'}
+    
+class AlignTop(bpy.types.Operator):
+    """Top Align"""
+    bl_idname = "object.align_top" 
+                                     
+     
+    bl_label = "Align Objects Top"
+    bl_options = { 'REGISTER', 'UNDO' }
+    
+    def execute(self, context):
+
+        scene = context.scene
+
+
+        #new code
+        
+        bpy.ops.object.align(align_mode='OPT_3', relative_to='OPT_4', align_axis={'Y'}) 
+        
+        return {'FINISHED'}
+    
+class AlignHcenter(bpy.types.Operator):
+    """Horizontal Center Align"""
+    bl_idname = "object.align_hcenter" 
+                                     
+     
+    bl_label = "Align Objects Horizontal Center"
+    bl_options = { 'REGISTER', 'UNDO' }
+    
+    def execute(self, context):
+
+        scene = context.scene
+
+
+        #new code
+        
+        bpy.ops.object.align(align_mode='OPT_2', relative_to='OPT_4', align_axis={'Y'}) 
+        
+        return {'FINISHED'}
+    
+class AlignBottom(bpy.types.Operator):
+    """Horizontal Bottom Align"""
+    bl_idname = "object.align_bottom" 
+                                     
+     
+    bl_label = "Align Objects Horizontal Bottom"
+    bl_options = { 'REGISTER', 'UNDO' }
+    
+    def execute(self, context):
+
+        scene = context.scene
+
+
+        #new code
+        
+        bpy.ops.object.align(align_mode='OPT_1', relative_to='OPT_4', align_axis={'Y'}) 
+        
+        return {'FINISHED'}
 
 
 
@@ -2119,6 +2232,42 @@ class ArtistPanel(Panel):
         row4 = row.split(align=True)
         row4.operator("artist_paint.remove_modifiers",
                     text="", icon='RECOVER_LAST')
+ow = layout.row()
+        
+        row.label(text="ALIGN PRESETS")
+        box = layout.box()                        #VERTICAL ALIGN
+        col = box.column(align = True)
+        row = col.row(align = True)
+        row1 = row.split(align=True)
+        row1.label(text="VERTICAL")
+        row1.scale_x = 0.50
+        row.separator()
+        row2 = row.split(align=False)
+        row2.operator("object.align_left", text="Left", icon = 'LOOP_BACK')
+        
+        row2.operator("object.align_center", text="Center", icon = 'PAUSE')
+        row2.scale_x = 1.00
+        row.separator()
+        row3 = row.split(align=True)
+        row3.operator("object.align_right",
+                    text="Right", icon = 'LOOP_FORWARDS')
+        
+        box = layout.box()                        #HORIZONTAL ALIGN
+        col = box.column(align = True)
+        row = col.row(align = True)
+        row1 = row.split(align=True)
+        row1.label(text="HORIZONTAL")
+        row1.scale_x = 0.50
+        row.separator()
+        row2 = row.split(align=False)
+        row2.operator("object.align_top", text="Top", icon = 'TRIA_UP')
+        
+        row2.operator("object.align_hcenter", text="Horizon", icon = 'GRIP')
+        row2.scale_x = 1.00
+        row.separator()
+        row3 = row.split(align=True)
+        row3.operator("object.align_bottom",
+                    text="Bottom", icon = 'TRIA_DOWN')
 
 
         box = layout.box()                        #CANVAS FRAME CONSTRAINT
