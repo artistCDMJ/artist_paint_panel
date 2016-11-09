@@ -968,7 +968,7 @@ class TraceSelection(Operator):
         #------------------------------------------------------MESH MASK UV
         scene.objects.active = cv
         objOPS.convert(target='MESH')            #convert to mesh
-        
+
         scene.objects.active = obj               #select the canvas
         #init rotation
         bpy.ops.transform.rotate(value=-objRz,
@@ -1364,7 +1364,7 @@ class SetSymmetryOrigin(Operator):
 class ResetOrigin(Operator):
     """"Reset Canvas Origin"""
     bl_idname = "artist_paint.reset_origin"
-    bl_label = "Reset Canvas Origin"
+    bl_label = ""
     bl_description = "Reset the canvas origin!"
 
     @classmethod
@@ -1770,12 +1770,12 @@ class CanvasResetrot(Operator):
 
 class ReprojectMask(bpy.types.Operator):
     """Reproject Mask"""
-    bl_idname = "artist_paint.reproject_mask" 
-                                     
-     
+    bl_idname = "artist_paint.reproject_mask"
+
+
     bl_label = "Reproject Mask by View"
     bl_options = { 'REGISTER', 'UNDO' }
-    
+
     def execute(self, context):
 
         scene = context.scene
@@ -1789,22 +1789,22 @@ class ReprojectMask(bpy.types.Operator):
 
         bpy.ops.paint.texture_paint_toggle() #toggle texpaint
         return {'FINISHED'}
-    
+
 #next operator
 class SolidfyDifference(bpy.types.Operator):
     """Solidify and Difference Mask"""
     bl_idname = "artist_paint.solidfy_difference"
     bl_label = "Add Solidy and Difference Bool"
     bl_options = { 'REGISTER','UNDO' }
-    
+
     def execute(self, context):
         scene = context.scene
-                
-        
+
+
         #new code
         sel = bpy.context.selected_objects
         act = bpy.context.scene.objects.active
-        
+
         for obj in sel:
             context.scene.objects.active = obj#set active to selected
             bpy.ops.object.editmode_toggle()
@@ -1814,85 +1814,85 @@ class SolidfyDifference(bpy.types.Operator):
             bpy.ops.object.modifier_add(type='SOLIDIFY')#set soldifiy for bool
             bpy.context.object.modifiers["Solidify"].thickness = 0.3#thicker than active
             bpy.ops.transform.translate(value=(0, 0, 0.01), constraint_axis=(False, False, True), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1, release_confirm=True)#attempt to only move bool brush up in Z
-            
-            context.scene.objects.active = act#reset active 
-            
+
+            context.scene.objects.active = act#reset active
+
             bpy.ops.object.editmode_toggle()
             bpy.ops.mesh.dissolve_faces()
             bpy.ops.object.editmode_toggle()
 
-            
+
             bpy.ops.object.modifier_add(type='SOLIDIFY')#basic soldify for boolean
             bpy.ops.transform.translate(value=(0, 0, 0), constraint_axis=(False, False, True), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1, release_confirm=True)#to move active 0 in Z
-                
-            
-            bpy.ops.btool.boolean_diff()#call booltool
-                
-            
-            return {'FINISHED'}           
 
-        
+
+            bpy.ops.btool.boolean_diff()#call booltool
+
+
+            return {'FINISHED'}
+
+
         #user moves parent and then adjusts child
         #user calls reproject while in obj mode which returns mask to texpaint
-        
+
 #next operator
 class SolidfyUnion(bpy.types.Operator):
     """Solidify and Union Mask"""
     bl_idname = "artist_paint.solidfy_union"
     bl_label = "Add Solidy and Union Bool"
     bl_options = { 'REGISTER','UNDO' }
-    
+
     def execute(self, context):
         scene = context.scene
-                
-        
+
+
         #new code
         sel = bpy.context.selected_objects
         act = bpy.context.scene.objects.active
-        
+
         for obj in sel:
             context.scene.objects.active = obj#set active to selected
-            
+
             bpy.ops.object.editmode_toggle()
             bpy.ops.mesh.dissolve_faces()#to get a single face for paint projection
             bpy.ops.object.editmode_toggle()
-            
+
             bpy.ops.object.modifier_add(type='SOLIDIFY')#set soldifiy for bool
             bpy.context.object.modifiers["Solidify"].thickness = 0.3#thicker than active
             #bpy.ops.transform.translate(value=(0, 0, 0.01), constraint_axis=(False, False, True), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1, release_confirm=True)#attempt to only move bool brush up in Z
-            
-            context.scene.objects.active = act#reset active 
-            
+
+            context.scene.objects.active = act#reset active
+
             bpy.ops.object.editmode_toggle()
             bpy.ops.mesh.dissolve_faces()
             bpy.ops.object.editmode_toggle()
-            
+
             bpy.ops.object.modifier_add(type='SOLIDIFY')#basic soldify for boolean
             bpy.context.object.modifiers["Solidify"].thickness = 0.3#thicker than active
             #bpy.ops.transform.translate(value=(0, 0, 0), constraint_axis=(False, False, True), constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1, release_confirm=True)#to move active 0 in Z
-                
-            
-            bpy.ops.btool.boolean_union()#call booltool
-                
-            
-            return {'FINISHED'}           
 
-        
+
+            bpy.ops.btool.boolean_union()#call booltool
+
+
+            return {'FINISHED'}
+
+
         #user moves parent and then adjusts child
         #user calls reproject while in obj mode which returns mask to texpaint
-        
-        
+
+
 #next operator
 class RemoveMods(bpy.types.Operator):
     """Remove Modifiers"""
     bl_idname = "artist_paint.remove_modifiers"
-    bl_label = "Remove Modifiers"
+    bl_label = ""
     bl_options = { 'REGISTER','UNDO' }
-    
+
     def execute(self, context):
         scene = context.scene
-                
-        
+
+
         #new code
         context = bpy.context
         scene = context.scene
@@ -1909,129 +1909,129 @@ class RemoveMods(bpy.types.Operator):
         # object will still have modifiers, remove them
         obj.modifiers.clear()
 
-        # assign the new mesh to obj.data 
+        # assign the new mesh to obj.data
         obj.data = new_mesh
 
         # remove the old mesh from the .blend
         bpy.data.meshes.remove(old_mesh)
         bpy.context.object.draw_type = 'TEXTURED'
 
-        
-                
-            
+
+
+
         return {'FINISHED'}
 class AlignLeft(bpy.types.Operator):
     """Left Align"""
-    bl_idname = "object.align_left" 
-                                     
-     
+    bl_idname = "object.align_left"
+
+
     bl_label = "Align Objects Left"
     bl_options = { 'REGISTER', 'UNDO' }
-    
+
     def execute(self, context):
 
         scene = context.scene
 
 
         #new code
-        
+
         bpy.ops.object.align(align_mode='OPT_1', relative_to='OPT_4', align_axis={'X'}) #toggle texpaint
-        
+
         return {'FINISHED'}
-    
+
 class AlignCenter(bpy.types.Operator):
     """Center Align"""
-    bl_idname = "object.align_center" 
-                                     
-     
+    bl_idname = "object.align_center"
+
+
     bl_label = "Align Objects Center"
     bl_options = { 'REGISTER', 'UNDO' }
-    
+
     def execute(self, context):
 
         scene = context.scene
 
 
         #new code
-        
+
         bpy.ops.object.align(align_mode='OPT_2', relative_to='OPT_4', align_axis={'X'}) #toggle texpaint
-        
+
         return {'FINISHED'}
 
 class AlignRight(bpy.types.Operator):
     """Center Align"""
-    bl_idname = "object.align_right" 
-                                     
-     
+    bl_idname = "object.align_right"
+
+
     bl_label = "Align Objects Right"
     bl_options = { 'REGISTER', 'UNDO' }
-    
+
     def execute(self, context):
 
         scene = context.scene
 
 
         #new code
-        
+
         bpy.ops.object.align(align_mode='OPT_3', relative_to='OPT_4', align_axis={'X'}) #toggle texpaint
-        
+
         return {'FINISHED'}
-    
+
 class AlignTop(bpy.types.Operator):
     """Top Align"""
-    bl_idname = "object.align_top" 
-                                     
-     
+    bl_idname = "object.align_top"
+
+
     bl_label = "Align Objects Top"
     bl_options = { 'REGISTER', 'UNDO' }
-    
+
     def execute(self, context):
 
         scene = context.scene
 
 
         #new code
-        
-        bpy.ops.object.align(align_mode='OPT_3', relative_to='OPT_4', align_axis={'Y'}) 
-        
+
+        bpy.ops.object.align(align_mode='OPT_3', relative_to='OPT_4', align_axis={'Y'})
+
         return {'FINISHED'}
-    
+
 class AlignHcenter(bpy.types.Operator):
     """Horizontal Center Align"""
-    bl_idname = "object.align_hcenter" 
-                                     
-     
+    bl_idname = "object.align_hcenter"
+
+
     bl_label = "Align Objects Horizontal Center"
     bl_options = { 'REGISTER', 'UNDO' }
-    
+
     def execute(self, context):
 
         scene = context.scene
 
 
         #new code
-        
-        bpy.ops.object.align(align_mode='OPT_2', relative_to='OPT_4', align_axis={'Y'}) 
-        
+
+        bpy.ops.object.align(align_mode='OPT_2', relative_to='OPT_4', align_axis={'Y'})
+
         return {'FINISHED'}
-    
+
 class AlignBottom(bpy.types.Operator):
     """Horizontal Bottom Align"""
-    bl_idname = "object.align_bottom" 
-                                     
-     
+    bl_idname = "object.align_bottom"
+
+
     bl_label = "Align Objects Horizontal Bottom"
     bl_options = { 'REGISTER', 'UNDO' }
-    
+
     def execute(self, context):
 
         scene = context.scene
 
 
         #new code
-        
-        bpy.ops.object.align(align_mode='OPT_1', relative_to='OPT_4', align_axis={'Y'}) 
-        
+
+        bpy.ops.object.align(align_mode='OPT_1', relative_to='OPT_4', align_axis={'Y'})
+
         return {'FINISHED'}
 
 
@@ -2105,10 +2105,13 @@ class ArtistPanel(Panel):
         row1 = row.split(align=True)
         row1.label(text="Image State")                #IMAGE STATE
         row2 = row.split(align=True)
-        row2.operator("artist_paint.multitexture",
-                    text='', icon="RENDERLAYERS")
-        row2.operator("artist_paint.glsl",
+
+        if scene.game_settings.material_mode == 'GLSL':
+            row2.operator("artist_paint.multitexture",
                     text='', icon="RADIO")
+        else:
+            row2.operator("artist_paint.glsl",
+                    text='', icon="RENDERLAYERS")
         row2.scale_x = 1.00
 
         col.separator()
@@ -2211,88 +2214,67 @@ class ArtistPanel(Panel):
             row.prop(ipaint, "invert_stencil",
                         text="Invert the mask",
                         icon='IMAGE_ALPHA')
-    
+
         col.separator()
-    
-        box = layout.box()                        #BOOL MASK AND REUSE
-        col = box.column(align = True)
-        row = col.row(align = True)
+
+        row = col.row(align = True)                        #BOOL MASK AND REUSE
         row1 = row.split(align=True)
         row1.label(text="Bool")
-        row1.scale_x = 0.50
-        row.separator()
+        row1.scale_x = 0.30
         row2 = row.split(align=True)
-        row2.operator("artist_paint.solidfy_difference", text="Difference", icon = 'ROTACTIVE')
-        row2.operator("artist_paint.solidfy_union", text="Union", icon = 'ROTATECOLLECTION')
+        row2.operator("artist_paint.solidfy_difference", text=" Difference", icon = 'ROTACTIVE')
+        row2.operator("artist_paint.solidfy_union", text=" Union", icon = 'ROTATECOLLECTION')
         row2.scale_x = 1.00
         row.separator()
         row3 = row.split(align=True)
         row3.operator("artist_paint.reproject_mask",
-                    text="Reproject", icon = 'NODE_SEL')
+                    text=" Reproject", icon = 'NODE_SEL')
+        row3.scale_x = 1.10
         row4 = row.split(align=True)
-        row4.operator("artist_paint.remove_modifiers",
-                    text="", icon='RECOVER_LAST')
-                    
-        row = layout.row()
-        
-        row.label(text="ALIGN PRESETS")
+        row4.operator("artist_paint.remove_modifiers", icon='RECOVER_LAST')
+
+        col.separator()
+
         box = layout.box()                        #VERTICAL ALIGN
         col = box.column(align = True)
         row = col.row(align = True)
-        row1 = row.split(align=True)
-        row1.label(text="VERTICAL")
-        row1.scale_x = 0.50
-        row.separator()
-        row2 = row.split(align=False)
-        row2.operator("object.align_left", text="Left", icon = 'LOOP_BACK')
-        
-        row2.operator("object.align_center", text="Center", icon = 'PAUSE')
-        row2.scale_x = 1.00
-        row.separator()
-        row3 = row.split(align=True)
-        row3.operator("object.align_right",
-                    text="Right", icon = 'LOOP_FORWARDS')
-        
-        box = layout.box()                        #HORIZONTAL ALIGN
-        col = box.column(align = True)
+        row.label(text="Align Presets")
         row = col.row(align = True)
-        row1 = row.split(align=True)
-        row1.label(text="HORIZONTAL")
-        row1.scale_x = 0.50
-        row.separator()
-        row2 = row.split(align=False)
-        row2.operator("object.align_top", text="Top", icon = 'TRIA_UP')
-        
-        row2.operator("object.align_hcenter", text="Horizon", icon = 'GRIP')
-        row2.scale_x = 1.00
-        row.separator()
-        row3 = row.split(align=True)
-        row3.operator("object.align_bottom",
+        row.label(text="Vertical")
+        row.operator("object.align_left",
+                    text="Left", icon = 'LOOP_BACK')
+        row.operator("object.align_center",
+                    text="Center", icon = 'PAUSE')
+        row.operator("object.align_right",
+                    text="Right", icon = 'LOOP_FORWARDS')
+        row = col.row(align = True)                        #HORIZONTAL ALIGN
+        row.label(text="Horizontal")
+        row.operator("object.align_top", text="Top", icon = 'TRIA_UP')
+        row.operator("object.align_hcenter", text="Center", icon = 'GRIP')
+        row.operator("object.align_bottom",
                     text="Bottom", icon = 'TRIA_DOWN')
 
+        col.separator()
 
         box = layout.box()                        #CANVAS FRAME CONSTRAINT
         col = box.column(align = True)
-        row = col.row(align = True)
-        row1 = row.split(align=True)
+        row = col.row(align=True)
+        row1 = row.split()
         row1.label(text="Mirror")
-        row1.scale_x = 0.50
-        row.separator()
         row2 = row.split(align=True)
-        row2.prop(ipaint, "use_symmetry_x", text="Horizontal", toggle=True)
-        row2.prop(ipaint, "use_symmetry_y", text="Vertical", toggle=True)
-        row2.scale_x = 1.00
+        row2.prop(ipaint, "use_symmetry_x", text=" Horizontal", toggle=True)
+        row2.prop(ipaint, "use_symmetry_y", text=" Vertical", toggle=True)
+        row2.scale_x = 1.50
         row.separator()
         row3 = row.split(align=True)
         row3.operator("artist_paint.set_symmetry_origin",
-                    text="New", icon='VIEW3D_VEC')
+                    text=" New", icon='VIEW3D_VEC')
+        row3.scale_x = 1.50
         row4 = row.split(align=True)
-        row4.operator("artist_paint.reset_origin",
-                    text="", icon='RECOVER_AUTO')
-
-
+        row4.operator("artist_paint.reset_origin", icon='RECOVER_AUTO')
 
         col.separator()
+
         row = col.row(align = True)                     #FLIP
         row.operator("artist_paint.canvas_horizontal",
                     text="Canvas Flip Horizontal",
