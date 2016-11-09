@@ -2202,19 +2202,21 @@ class ArtistPanel(Panel):
 
         col.separator()
 
-        row = col.row(align = True)
         col.prop(ipaint, "use_stencil_layer", text="Stencil Mask")
+
+        col.separator()
+
         if ipaint.use_stencil_layer == True:
-            cel = box.column(align = True)
-            cel.template_ID(ipaint, "stencil_image")
-            cel.operator("image.new", text="New").\
+            col.template_ID(ipaint, "stencil_image")
+            col.operator("image.new", text="New").\
                                         gen_context = 'PAINT_STENCIL'
-            row = cel.row(align = True)
+            row = col.row(align = True)
             row.prop(ipaint, "stencil_color", text="")
             row.prop(ipaint, "invert_stencil",
                         text="Invert the mask",
                         icon='IMAGE_ALPHA')
 
+        col.separator()
         col.separator()
 
         row = col.row(align = True)                        #BOOL MASK AND REUSE
