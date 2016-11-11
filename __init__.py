@@ -116,13 +116,16 @@ bpy.types.Scene.bordercrop_is_activated = \
                             bpy.props.BoolProperty(default=False)
 bpy.types.Scene.guides_are_activated = \
                             bpy.props.BoolProperty(default=False)
-
 #bool property to use constraint rotation
 bpy.types.Scene.canvas_in_frame = \
                                 bpy.props.BoolProperty(default=False)
 #bool property to use with resetrotation
 bpy.types.Scene.ArtistPaint_Bool02 = \
                                 bpy.props.BoolProperty(default=False)
+bpy.types.Scene.mask_V_align = \
+                            bpy.props.BoolProperty(default=False)
+
+
 #bool property to cadenas addon's prefs
 bpy.types.Scene.prefs_are_locked = \
                                 bpy.props.BoolProperty(default=True)
@@ -1923,116 +1926,92 @@ class RemoveMods(bpy.types.Operator):
 class AlignLeft(bpy.types.Operator):
     """Left Align"""
     bl_idname = "object.align_left"
-
-
     bl_label = "Align Objects Left"
     bl_options = { 'REGISTER', 'UNDO' }
 
     def execute(self, context):
-
         scene = context.scene
-
-
         #new code
-
         bpy.ops.object.align(align_mode='OPT_1', relative_to='OPT_4', align_axis={'X'}) #toggle texpaint
-
         return {'FINISHED'}
 
 class AlignCenter(bpy.types.Operator):
     """Center Align"""
     bl_idname = "object.align_center"
-
-
     bl_label = "Align Objects Center"
     bl_options = { 'REGISTER', 'UNDO' }
 
     def execute(self, context):
-
         scene = context.scene
-
-
         #new code
-
         bpy.ops.object.align(align_mode='OPT_2', relative_to='OPT_4', align_axis={'X'}) #toggle texpaint
-
+        scene.mask_V_align = True
         return {'FINISHED'}
 
 class AlignRight(bpy.types.Operator):
     """Center Align"""
     bl_idname = "object.align_right"
-
-
     bl_label = "Align Objects Right"
     bl_options = { 'REGISTER', 'UNDO' }
 
     def execute(self, context):
-
         scene = context.scene
-
-
         #new code
-
         bpy.ops.object.align(align_mode='OPT_3', relative_to='OPT_4', align_axis={'X'}) #toggle texpaint
-
         return {'FINISHED'}
 
 class AlignTop(bpy.types.Operator):
     """Top Align"""
     bl_idname = "object.align_top"
-
-
     bl_label = "Align Objects Top"
     bl_options = { 'REGISTER', 'UNDO' }
 
     def execute(self, context):
-
         scene = context.scene
-
-
         #new code
-
         bpy.ops.object.align(align_mode='OPT_3', relative_to='OPT_4', align_axis={'Y'})
-
         return {'FINISHED'}
 
 class AlignHcenter(bpy.types.Operator):
     """Horizontal Center Align"""
     bl_idname = "object.align_hcenter"
-
-
     bl_label = "Align Objects Horizontal Center"
     bl_options = { 'REGISTER', 'UNDO' }
 
     def execute(self, context):
-
         scene = context.scene
-
-
         #new code
-
         bpy.ops.object.align(align_mode='OPT_2', relative_to='OPT_4', align_axis={'Y'})
+        scene.mask_V_align = False
+        return {'FINISHED'}
 
+class CenterAlignReset(bpy.types.Operator):
+    """Center Alignment Reset"""
+    bl_idname = "object.center_align_reset"
+    bl_label = ""
+    bl_options = { 'REGISTER', 'UNDO' }
+
+    def execute(self, context):
+        scene = context.scene
+        if scene.mask_V_align:
+            scene.mask_V_align = False
+        else:
+            scene.mask_V_align = True
         return {'FINISHED'}
 
 class AlignBottom(bpy.types.Operator):
     """Horizontal Bottom Align"""
     bl_idname = "object.align_bottom"
-
-
     bl_label = "Align Objects Horizontal Bottom"
     bl_options = { 'REGISTER', 'UNDO' }
 
     def execute(self, context):
-
         scene = context.scene
-
-
         #new code
-
         bpy.ops.object.align(align_mode='OPT_1', relative_to='OPT_4', align_axis={'Y'})
-
         return {'FINISHED'}
+
+
 
 
 
@@ -2074,6 +2053,7 @@ class ArtistPanel(Panel):
         bordercrop_is_activated = scene.bordercrop_is_activated
         guides_are_activated =  scene.guides_are_activated
         PAL = scene.prefs_are_locked
+        mask_V_align = scene.mask_V_align
 
         GAA = BIA = False
         if scene.artist_paint is not None:      #if main canvas isn't erased
@@ -2099,7 +2079,8 @@ class ArtistPanel(Panel):
         toolsettings = context.tool_settings
         ipaint = toolsettings.image_paint
 
-        box = layout.box()
+        A = layout.row(align = True)
+        box = A.box()
         col = box.column(align = True)
         row = col.row(align = True)
         row1 = row.split(align=True)
@@ -2235,26 +2216,41 @@ class ArtistPanel(Panel):
         row4 = row.split(align=True)
         row4.operator("artist_paint.remove_modifiers", icon='RECOVER_LAST')
 
-        col.separator()
+        col.separator()        #ALIGNEMENT
+        col.label("Masks Alignment")        #ALIGNEMENT
+        row = col.row(align = True)        #TABLEAU
 
-        box = layout.box()                        #VERTICAL ALIGN
-        col = box.column(align = True)
-        row = col.row(align = True)
-        row.label(text="Align Presets")
-        row = col.row(align = True)
-        row.label(text="Vertical")
-        row.operator("object.align_left",
-                    text="Left", icon = 'LOOP_BACK')
-        row.operator("object.align_center",
-                    text="Center", icon = 'PAUSE')
-        row.operator("object.align_right",
-                    text="Right", icon = 'LOOP_FORWARDS')
-        row = col.row(align = True)                        #HORIZONTAL ALIGN
-        row.label(text="Horizontal")
-        row.operator("object.align_top", text="Top", icon = 'TRIA_UP')
-        row.operator("object.align_hcenter", text="Center", icon = 'GRIP')
-        row.operator("object.align_bottom",
-                    text="Bottom", icon = 'TRIA_DOWN')
+        row1 = row.split(align = True)                         #Column 1
+        row1.scale_x = 1.00
+        col1 = row1.column(align = True)
+        col1.label("")
+        col1.operator("object.align_left",
+                    text="Left", icon = 'TRIA_LEFT_BAR')
+        col1.label("")
+
+
+        row2 = row.split(align = True)                         #column 2
+        row2.scale_x = 1.00
+        col2 = row2.column(align = True)
+        col2.operator("object.align_top", text="Top", icon = 'TRIA_UP_BAR')
+        if mask_V_align:
+            col2.operator("object.align_hcenter",
+                    text="Center V", icon = 'GRIP')
+        else:
+            col2.operator("object.align_center",
+                    text="Center H", icon = 'PAUSE')
+        col2.operator("object.align_bottom",
+                    text="Bottom", icon = 'TRIA_DOWN_BAR')
+        col2.operator("object.center_align_reset", icon='RECOVER_LAST')
+
+
+        row3 = row.split(align = True)                         #column 3
+        row3.scale_x = 1.00
+        col3 = row3.column(align = True)
+        col3.label("")
+        col3.operator("object.align_right",
+                    text="Right", icon = 'TRIA_RIGHT_BAR')
+        col3.label("")
 
         col.separator()
 
@@ -2306,6 +2302,8 @@ class ArtistPanel(Panel):
 
         col.operator("artist_paint.canvas_resetrot",
                     text = "Reset Rotation", icon = 'CANCEL')
+
+
 
 
 def update_panel(self, context):
