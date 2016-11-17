@@ -2153,28 +2153,6 @@ class CustomFps(bpy.types.Operator):
                
         return {'FINISHED'}
 
-class ImagesPlanes(bpy.types.Operator):
-    """Import Images as Planes for Making Reference Slides"""
-    bl_idname = "object.images_planes" 
-                                     
-     
-    bl_label = "operator for import images"
-    bl_options = { 'REGISTER', 'UNDO' }
-    
-    def execute(self, context):
-
-        scene = context.scene
-
-
-        #new code
-        
-        bpy.ops.import_image.to_plane() #import images
-        
-        return {'FINISHED'}
-
-
-
-
 
 ##############################################################  panel
 class ArtistPanel(Panel):
@@ -2273,7 +2251,7 @@ class ArtistPanel(Panel):
 
         box = layout.box()                             #MACRO
         col = box.column(align = True)
-        col.label(text="Special Macros")               #?
+        col.label(text="Special Setup Macros")               #?
         col.operator("artist_paint.create_brush_scene",
                 text="Create Brush Maker Scene",
                 icon='OUTLINER_OB_CAMERA')
@@ -2305,7 +2283,7 @@ class ArtistPanel(Panel):
         row2 = row.split(align=True)
         row2.operator("object.create_reference_scene", text = "Refmaker Scene", icon = 'OUTLINER_OB_LAMP')
         row3 = row.split(align=True)
-        row3.operator("object.images_planes", text="", icon='NODE_SEL')
+        row3.operator("import_image.to_plane", text="", icon='NODE_SEL')
         
         ########sculpt camera and lock toggle#####
         #box = layout.box()                        
