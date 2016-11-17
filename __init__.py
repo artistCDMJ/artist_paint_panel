@@ -2306,11 +2306,10 @@ class ArtistPanel(Panel):
         row2.operator("object.create_reference_scene", text = "Refmaker Scene", icon = 'OUTLINER_OB_LAMP')
         row3 = row.split(align=True)
         row3.operator("object.images_planes", text="", icon='NODE_SEL')
-        col.operator("render.opengl",
-                    text = "Snapshot", icon = 'RENDER_STILL')
+        
         ########sculpt camera and lock toggle#####
-        box = layout.box()                        
-        col = box.column(align = True)
+        #box = layout.box()                        
+        #col = box.column(align = True)
         row = col.row(align = True)
         row1 = row.split(align=True)
         row1.label(text="Sculpt/Paint View")
