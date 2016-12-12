@@ -2010,7 +2010,7 @@ class AlignBottom(bpy.types.Operator):
         #new code
         bpy.ops.object.align(align_mode='OPT_1', relative_to='OPT_4', align_axis={'Y'})
         return {'FINISHED'}
-
+    
 ############################### SCULPT & PAINT REFERENCE+
 
 #--------------------------------------------------Create reference scene
@@ -2063,22 +2063,22 @@ class RefMakerScene(Operator):
                 bpy.ops.view3d.viewnumpad(override, type = 'CAMERA')
                 break # this will break the loop after the first ran
         return {'FINISHED'}
-
+    
 class SculptView(bpy.types.Operator):
     """Sculpt View Reference Camera"""
-    bl_idname = "object.sculpt_camera"
-
-
+    bl_idname = "object.sculpt_camera" 
+                                     
+     
     bl_label = "Sculpt Camera"
     bl_options = { 'REGISTER', 'UNDO' }
-
+    
     def execute(self, context):
 
         scene = context.scene
 
 
         #new code
-
+        
         bpy.ops.object.camera_add(
                     view_align=False,
                     enter_editmode=False,
@@ -2087,7 +2087,7 @@ class SculptView(bpy.types.Operator):
                     )
 
         context.object.name="Reference Cam" #add camera to front view
-
+        
         bpy.context.object.data.show_passepartout = False
         bpy.context.object.data.lens = 80
 
@@ -2099,30 +2099,30 @@ class SculptView(bpy.types.Operator):
                 override['area'] = area
                 bpy.ops.view3d.viewnumpad(override, type = 'CAMERA')
                 break # this will break the loop after the first ran
-
-#
+            
+#            
         #bpy.ops.view3d.background_image_add()#ADD IMAGE TO BACKGROUND
-
-        #bpy.context.space_data.show_background_images = True
-
+        
+        #bpy.context.space_data.show_background_images = True 
+        
         bpy.context.scene.render.resolution_x = 1920
         bpy.context.scene.render.resolution_y = 1080
-
-
-
-
+        
+        
+    
+        
         return {'FINISHED'}
 
 class ToggleLock(bpy.types.Operator):
     """Lock Screen"""
-    bl_idname = "object.lock_screen"
-
-
+    bl_idname = "object.lock_screen" 
+                                     
+     
     bl_label = "Lock Screen Toggle"
     bl_options = { 'REGISTER', 'UNDO' }
-
+    
     def execute(self, context):
-
+    
         A = context.space_data.lock_camera
         B = context.space_data.show_only_render
         if A and B == True:
@@ -2136,10 +2136,10 @@ class ToggleLock(bpy.types.Operator):
 class CustomFps(bpy.types.Operator):
     """Slow Play FPS"""
     bl_idname = "object.slow_play"
-
+    
     bl_label = "Slow Play FPS Toggle"
     bl_options = { 'REGISTER', 'UNDO' }
-
+    
     def execute(self, context):
         #bpy.context.scene.render.fps = 1
         #bpy.context.scene.render.fps_base = 12
@@ -2149,8 +2149,8 @@ class CustomFps(bpy.types.Operator):
             context.scene.render.fps_base = 1
         else:
              bpy.context.scene.render.fps = 1
-             bpy.context.scene.render.fps_base = 12
-
+             bpy.context.scene.render.fps_base = 12 
+               
         return {'FINISHED'}
 
 
@@ -2234,39 +2234,12 @@ class ArtistPanel(Panel):
                     text='', icon="RENDERLAYERS")
         row2.scale_x = 1.00
 
-        #col.separator()
+        col.separator()
         row = col.row(align = True)
         row.operator("artist_paint.canvas_load",
                     text = "Import canvas", icon = 'IMAGE_COL')
         row.operator("artist_paint.reload_saved_state",
                                         icon = 'LOAD_FACTORY')
-        col =layout.column(align = False)
-        col.separator()
-        row = col.row(align = True)
-        row1 = row.split(align=True)
-        row1.label(text="Canvas Cam. Setup")         #INIT
-        row2 = row.split(align=True)
-        row2.operator("artist_paint.cameraview_paint",
-                    text = "Camera",
-                    icon = 'RENDER_REGION')
-        row3 = row.split(align=True)
-
-        Icon = 'CLIPUV_DEHLT' if BIA else 'BORDER_RECT'
-        row3.operator("artist_paint.border_toggle",
-                    text = "",
-                    icon = Icon)
-
-        Icun = 'CLIPUV_DEHLT' if GAA else 'MOD_LATTICE'
-        row3.operator("artist_paint.guides_toggle",
-                    text = "",
-                    icon = Icon)
-
-        Ican = 'LOCKED' if PAL else 'UNLOCKED'
-        row3.operator("artist_paint.prefs_lock_toggle",
-                    text = "",
-                    icon = Ican)
-        row3.scale_x = 1.60
-
 
         row = col.row(align = True)
         row.operator("artist_paint.save_current",
@@ -2298,7 +2271,7 @@ class ArtistPanel(Panel):
         row3.scale_x = 0.40
         #col.label('')
         row = layout.row()
-
+        
         ########reference maker scene#########
         #box = layout.box()
         #col = box.column(align = True)
@@ -2311,9 +2284,9 @@ class ArtistPanel(Panel):
         row2.operator("object.create_reference_scene", text = "Refmaker Scene", icon = 'OUTLINER_OB_LAMP')
         row3 = row.split(align=True)
         row3.operator("import_image.to_plane", text="", icon='NODE_SEL')
-
+        
         ########sculpt camera and lock toggle#####
-        #box = layout.box()
+        #box = layout.box()                        
         #col = box.column(align = True)
         row = col.row(align = True)
         row1 = row.split(align=True)
@@ -2334,7 +2307,32 @@ class ArtistPanel(Panel):
         if context.scene.render.fps == 1:
             row4.operator("object.slow_play", text="", icon='CAMERA_DATA')
 
+        col =layout.column(align = True)
+        col.separator()
+        row = col.row(align = True)
+        row1 = row.split(align=True)
+        row1.label(text="Canvas Cam. Setup")         #INIT
+        row2 = row.split(align=True)
+        row2.operator("artist_paint.cameraview_paint",
+                    text = "Camera",
+                    icon = 'RENDER_REGION')
+        row3 = row.split(align=True)
 
+        Icon = 'CLIPUV_DEHLT' if BIA else 'BORDER_RECT'
+        row3.operator("artist_paint.border_toggle",
+                    text = "",
+                    icon = Icon)
+
+        Icun = 'CLIPUV_DEHLT' if GAA else 'MOD_LATTICE'
+        row3.operator("artist_paint.guides_toggle",
+                    text = "",
+                    icon = Icun)
+
+        Ican = 'LOCKED' if PAL else 'UNLOCKED'
+        row3.operator("artist_paint.prefs_lock_toggle",
+                    text = "",
+                    icon = Ican)
+        row3.scale_x = 1.60
 
         col.separator()
         box = layout.box()
