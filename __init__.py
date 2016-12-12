@@ -2240,6 +2240,33 @@ class ArtistPanel(Panel):
                     text = "Import canvas", icon = 'IMAGE_COL')
         row.operator("artist_paint.reload_saved_state",
                                         icon = 'LOAD_FACTORY')
+        col =layout.column(align = True)
+        col.separator()
+        row = col.row(align = True)
+        row1 = row.split(align=True)
+        row1.label(text="Canvas Cam. Setup")         #INIT
+        row2 = row.split(align=True)
+        row2.operator("artist_paint.cameraview_paint",
+                    text = "Camera",
+                    icon = 'RENDER_REGION')
+        row3 = row.split(align=True)
+
+        Icon = 'CLIPUV_DEHLT' if BIA else 'BORDER_RECT'
+        row3.operator("artist_paint.border_toggle",
+                    text = "",
+                    icon = Icon)
+
+        Icun = 'CLIPUV_DEHLT' if GAA else 'MOD_LATTICE'
+        row3.operator("artist_paint.guides_toggle",
+                    text = "",
+                    icon = Icun)
+
+        Ican = 'LOCKED' if PAL else 'UNLOCKED'
+        row3.operator("artist_paint.prefs_lock_toggle",
+                    text = "",
+                    icon = Ican)
+        row3.scale_x = 1.60   
+           
 
         row = col.row(align = True)
         row.operator("artist_paint.save_current",
@@ -2307,32 +2334,7 @@ class ArtistPanel(Panel):
         if context.scene.render.fps == 1:
             row4.operator("object.slow_play", text="", icon='CAMERA_DATA')
 
-        col =layout.column(align = True)
-        col.separator()
-        row = col.row(align = True)
-        row1 = row.split(align=True)
-        row1.label(text="Canvas Cam. Setup")         #INIT
-        row2 = row.split(align=True)
-        row2.operator("artist_paint.cameraview_paint",
-                    text = "Camera",
-                    icon = 'RENDER_REGION')
-        row3 = row.split(align=True)
-
-        Icon = 'CLIPUV_DEHLT' if BIA else 'BORDER_RECT'
-        row3.operator("artist_paint.border_toggle",
-                    text = "",
-                    icon = Icon)
-
-        Icun = 'CLIPUV_DEHLT' if GAA else 'MOD_LATTICE'
-        row3.operator("artist_paint.guides_toggle",
-                    text = "",
-                    icon = Icun)
-
-        Ican = 'LOCKED' if PAL else 'UNLOCKED'
-        row3.operator("artist_paint.prefs_lock_toggle",
-                    text = "",
-                    icon = Ican)
-        row3.scale_x = 1.60
+        
 
         col.separator()
         box = layout.box()
